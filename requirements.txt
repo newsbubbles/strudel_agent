@@ -1,0 +1,14 @@
+# Strudel Music Assistant - MVP Dependencies
+
+# PydanticAI for agent framework
+pydantic-ai[openai,logfire]>=0.0.14
+
+# FastMCP for MCP server
+fastmcp>=0.2.0
+
+# Core dependencies
+pydantic>=2.0.0
+python-dotenv>=1.0.0
+
+# Logfire for observability
+logfire>=0.41.0
