@@ -11,34 +11,42 @@ A collection of proven musical patterns and techniques for live coding with Stru
 #### Four-on-the-Floor (House/Techno)
 ```javascript
 // Classic house beat
-sound("bd*4, [~ cp]*2, [~ hh]*4").bank("RolandTR909")
+$: sound("bd*4, [~ cp]*2, [~ hh]*4").bank("RolandTR909")
+```
 
+```javascript
 // With open hi-hat accents
-sound("bd*4, [~ cp]*2, hh*6 [hh oh]").bank("RolandTR909")
+$: sound("bd*4, [~ cp]*2, hh*6 [hh oh]").bank("RolandTR909")
 ```
 
 #### Rock Beat
 ```javascript
 // Basic rock
 setcpm(100/4)
-sound("[bd sd]*2, hh*8").bank("RolandTR505")
+$: sound("[bd sd]*2, hh*8").bank("RolandTR505")
+```
 
+```javascript
 // With variations
-sound("bd [~ sd] bd sd, hh*8, ~ ~ oh ~").bank("RolandTR808")
+setcpm(100/4)
+$: sound("bd [~ sd] bd sd, hh*8, ~ ~ oh ~").bank("RolandTR808")
 ```
 
 #### Breakbeat
 ```javascript
 // Amen break style
 setcpm(90/4)
-sound(`
+$: sound(`
 bd -  -  -  -  -  bd bd,
 -  -  sd -  -  -  sd -,
 hh hh hh hh hh hh hh hh
 `).bank("RolandTR909")
+```
 
+```javascript
 // With sample variations
-sound("bd*2 [~ bd] bd, ~ sd ~ sd:1, hh*8")
+setcpm(90/4)
+$: sound("bd*2 [~ bd] bd, ~ sd ~ sd:1, hh*8")
   .bank("RolandTR808")
 ```
 
@@ -46,14 +54,14 @@ sound("bd*2 [~ bd] bd, ~ sd ~ sd:1, hh*8")
 ```javascript
 // Boom bap
 setcpm(85/4)
-sound(`
+$: sound(`
 bd -  -  -  bd -  -  -,
 -  -  sd -  -  -  sd -,
 [hh hh] -  hh -  [hh hh] -  hh -
 `).bank("AkaiLinn")
 
 // With swing
-sound("bd ~ ~ ~ bd ~ ~ ~, ~ ~ sd ~ ~ ~ sd ~")
+$: sound("bd ~ ~ ~ bd ~ ~ ~, ~ ~ sd ~ ~ ~ sd ~")
   .late("[0 .01]*4")  // Adds shuffle
   .bank("RolandTR808")
 ```
@@ -63,7 +71,7 @@ sound("bd ~ ~ ~ bd ~ ~ ~, ~ ~ sd ~ ~ ~ sd ~")
 #### 16-Step Sequencer Style
 ```javascript
 setcpm(90/4)
-sound(`
+$: sound(`
 [-  -  oh - ] [-  -  -  - ] [-  -  -  - ] [-  -  -  - ],
 [hh hh -  - ] [hh -  hh - ] [hh -  hh - ] [hh -  hh - ],
 [-  -  -  - ] [cp -  -  - ] [-  -  -  - ] [cp -  -  - ],
@@ -74,25 +82,25 @@ sound(`
 #### Polyrhythmic Drums
 ```javascript
 // 3 against 4
-sound("{bd bd bd, cp cp cp cp}")
+$: sound("{bd bd bd, sd:2 sd:1 sd:2 sd:1}")
 
 // Layered polyrhythms
-sound(`
+$: sound(`
 bd*3,
 sd*4,
 hh*5,
-cp*7
+cp*2
 `).gain(.7)
 ```
 
 #### Euclidean Rhythms
 ```javascript
 // Distribute events evenly
-sound("bd(5,8), sd(3,8), hh(7,8)")
+$: sound("bd(5,8), sd(3,8), hh(7,8)")
   .bank("RolandTR909")
 
 // With rotation
-sound("bd(5,8,2), sd(3,8,1), hh(7,8,3)")
+$: sound("bd(5,8,2), sd(3,8,1), hh(7,8,3)")
 ```
 
 ## Basslines
@@ -101,17 +109,17 @@ sound("bd(5,8,2), sd(3,8,1), hh(7,8,3)")
 
 ```javascript
 // Root note bass
-note("<c2 bb1 f2 eb2>")
+$: note("<c2 bb1 f2 eb2>")
   .s("sawtooth")
   .lpf(800)
 
 // With rhythm
-note("<[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>")
+$: note("<[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>")
   .s("sawtooth")
   .lpf(800)
 
 // Octave jumps
-note("c2 c3 <bb1 bb2> <f2 f3>")
+$: note("c2 c3 <bb1 bb2> <f2 f3>")
   .s("sawtooth,triangle")
   .lpf(600)
 ```
@@ -120,7 +128,7 @@ note("c2 c3 <bb1 bb2> <f2 f3>")
 
 ```javascript
 // Syncopated
-note("c2 ~ [eb2 f2] ~ c2 ~ g2 ~")
+$: note("c2 ~ [eb2 f2] ~ c2 ~ g2 ~")
   .s("sawtooth")
   .lpf(1000)
   .lpenv(2)
@@ -128,7 +136,7 @@ note("c2 ~ [eb2 f2] ~ c2 ~ g2 ~")
   .sustain(0)
 
 // With slides
-note("c2@3 eb2, eb2@3 f2, f2@3 g2, g2@3 c3")
+$: note("c2@3 eb2, eb2@3 f2, f2@3 g2, g2@3 c3")
   .s("sawtooth")
   .lpf(800)
   .clip(.8)
@@ -138,13 +146,13 @@ note("c2@3 eb2, eb2@3 f2, f2@3 g2, g2@3 c3")
 
 ```javascript
 // Jazz walking bass
-n("0 2 4 5, 3 5 7 8, 5 7 9 10, 7 9 11 12")
+$: n("0 2 4 5, 3 5 7 8, 5 7 9 10, 7 9 11 12")
   .scale("C2:major")
   .s("gm_acoustic_bass")
   .slow(2)
 
 // With chromatic approach
-n("0 2 3 4, 3 5 6 7, 5 7 8 9, 7 9 10 11")
+$: n("0 2 3 4, 3 5 6 7, 5 7 8 9, 7 9 10 11")
   .scale("C2:major")
   .s("sawtooth")
   .lpf(600)
@@ -156,17 +164,17 @@ n("0 2 3 4, 3 5 6 7, 5 7 8 9, 7 9 10 11")
 
 ```javascript
 // Basic up arpeggio
-n("0 2 4 7").scale("C4:minor")
+$: n("0 2 4 7").scale("C4:minor")
   .s("triangle")
   .release(.5)
 
-// Up and down
-n("0 2 4 7 4 2").scale("C4:minor")
+// Up and down / up and down
+$: n("0 2 4 7 4 2").scale("<C2:minor C3:minor C4:minor C3:minor>")
   .s("square")
   .lpf(2000)
 
 // Complex arpeggio
-n("<[0 2 4 7]*2 [0 3 5 8]*2>")
+$: n("<[0 2 4 7]*2 [0 3 5 8]*2>")
   .scale("C4:minor")
   .s("sawtooth")
   .lpf(1500)
@@ -182,12 +190,12 @@ $: n("0 2 3 5 7 5 3 2").scale("C4:minor:pentatonic")
   .room(.3)
 
 // With rhythm variation
-n("0 [2 3] 5 [7 5] 3 2")
+$: n("0 [2 3] 5 [7 5] 3 2")
   .scale("C4:minor:pentatonic")
   .s("gm_xylophone")
 
 // Octave jumps
-n("0 7 12 7 0 -5 0 7")
+$: n("0 7 12 7 0 -5 0 7")
   .scale("C3:minor")
   .s("sawtooth")
   .lpf(2000)
@@ -196,10 +204,15 @@ n("0 7 12 7 0 -5 0 7")
 ### Generative Melodies
 
 ```javascript
-// Random walk
-$: n(irand(8)).struct("x x*2 x x*3").scale("C4:minor:pentatonic")
-  .s("triangle")
-  .room(.5)
+// Random Bassline
+$: n(irand(8)).struct("x x*2 x x*3").scale("C1:minor:pentatonic")
+  .s("sawtooth").fm(3).orbit(2)
+  .room(.5).duckorbit(2).duckattack("<0.06 <0 0.1 0 0.15> 0.08>").duckdepth(1)
+
+// Bass accompanying lead following same random pattern
+$: n(irand(8)).struct("x <x*2 x*3> x <x*3 x*2>").scale("C5:minor:pentatonic")
+  .s("square").gain(0.3).orbit(2)
+  .delay(.5).room(.8).size(4).duckorbit(2).duckattack("<0.06 <0 0.1 0 0.15> 0.08>").duckdepth(1)
 
 // Constrained randomness
 $: n("<0 2 4> <[0 2] [3 5]> <[4 7] [5 8]>")

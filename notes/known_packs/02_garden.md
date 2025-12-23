@@ -25,7 +25,7 @@ Garden is a free, thoughtfully curated sample pack designed specifically for liv
 samples('github:mot4i/garden')
 
 // Use Garden samples
-sound("garden_bd garden_sd garden_hh*4")
+sound("garden_bd garden_sd garden_hh*3")
 ```
 
 ## Sample Categories
