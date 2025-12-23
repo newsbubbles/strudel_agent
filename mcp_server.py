@@ -11,7 +11,7 @@ from pathlib import Path
 import json
 import re
 import yaml
-from typing import Any
+from typing import Any, List
 from typing import Optional, Literal
 from pydantic import BaseModel, Field
 from mcp.server.fastmcp import FastMCP
@@ -97,6 +97,14 @@ class SearchKnowledgeRequest(BaseModel):
     query: str = Field(
         description="Regex pattern to search for in knowledge files (case-insensitive). Use simple patterns like 'filter' or complex ones like 'lpf|hpf|filter'"
     )
+
+class ListKnowledgeRequest(BaseModel):
+    """Request to list the available knowledge documents"""
+    pass
+
+class ReadKnowledgeDocRequest(BaseModel):
+    """Request to read a full knowledge document file"""
+    document_filenames: List[str] = Field(..., description="The document filenames to read")
 
 
 class ListProjectsRequest(BaseModel):
@@ -724,6 +732,31 @@ def search_knowledge(request: SearchKnowledgeRequest) -> dict:
         "query": request.query
     }
 
+
+@mcp.tool()
+def list_knowledgebase_docs(request: ListKnowledgeRequest) -> dict:
+    """Use this tool when you need to get the full context of some topic and search is not giving you the full context, perhaps during debugging"""
+    docs = []
+    for knowledge_doc in KNOWLEDGE_DIR.iterdir():
+        if not knowledge_doc.is_dir():
+            continue
+        
+        docs.append(knowledge_doc.name)
+        
+    return {"knowledge_documents": docs}
+
+@mcp.tool()
+def read_full_knowledge_docs(request: ReadKnowledgeDocRequest) -> dict:
+    """Use this tool after calling list_knowledgebase_docs in order to read multiple documents at a time"""
+    content = []
+    for doc in request.document_filenames:
+        path = KNOWLEDGE_DIR / doc
+        with open(path, 'r') as f:
+            content.append({
+                "document_filename": doc,
+                "content": f.read()
+            })
+    return {"documents": content}
 
 # ============================================================================
 # Project Tools

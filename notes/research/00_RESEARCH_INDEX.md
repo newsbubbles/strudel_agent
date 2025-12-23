@@ -1,6 +1,7 @@
 # Strudel Research Index
 
-**Research Completed**: 2025-12-22
+**Research Completed**: 2025-12-22  
+**Updated**: 2025-12-23
 
 This folder contains comprehensive research on Strudel live coding for music, gathered from official documentation.
 
@@ -105,6 +106,33 @@ This folder contains comprehensive research on Strudel live coding for music, ga
 - Time signature concepts
 - Musical concepts in code
 
+### 09_stack_and_song_structure.md
+**Purpose**: Building complete songs with JavaScript variables and arrangement  
+**Content**:
+- `stack()` function - layering patterns simultaneously
+- Using JavaScript variables for reusable musical parts
+- `arrange()` function - creating song structures
+- `cat()` function - sequential patterns
+- Complete song structure examples (verse/chorus/bridge)
+- When to use stack() vs mini-notation
+- Nested stacks for complex arrangements
+- Practical workflow for composition
+- Common patterns (techno, house, ambient)
+
+### 10_visualizers_reference.md
+**Purpose**: Visual feedback and performance visuals  
+**Content**:
+- Global vs inline visualizers
+- `punchcard()` / `pianoroll()` - note grids over time
+- `scope()` - oscilloscope for waveforms
+- `spiral()` - cyclical pattern visualization
+- `pitchwheel()` - pitch circle for harmony
+- `spectrum()` - frequency analyzer
+- `markcss()` - custom CSS styling
+- Options and customization for each visualizer
+- Usage tips and performance considerations
+- Common use cases and example combinations
+
 ## Key Findings for Agent Development
 
 ### 1. Pattern-Based Thinking
@@ -163,6 +191,21 @@ Almost any parameter can accept a pattern:
 .pan(sine)                    // Animated panning
 ```
 
+### 8. Song Structure with Variables
+JavaScript variables enable complete song composition:
+- Define reusable patterns as variables
+- Stack patterns to create sections (verse, chorus)
+- Use `arrange()` to sequence sections over cycles
+- Combine `stack()`, `cat()`, and `arrange()` for full songs
+
+### 9. Visual Feedback for Performance
+Visualizers enhance live coding and understanding:
+- Scope shows waveforms in real-time
+- Pianoroll/punchcard displays note patterns
+- Spectrum shows frequency content
+- Multiple inline visualizers can be combined
+- Essential for audiovisual performances
+
 ## Agent Design Implications
 
 ### For Understanding User Intent
@@ -179,6 +222,8 @@ The agent should:
 3. **Comment code** to explain musical intent
 4. **Provide alternatives** ("try this for more energy")
 5. **Explain what code does musically**
+6. **Use stack() and arrange()** for song structures
+7. **Add visualizers** for performance contexts
 
 ### For Teaching
 The agent can:
@@ -187,14 +232,18 @@ The agent can:
 3. **Build progressively** from simple to complex
 4. **Encourage experimentation**
 5. **Provide musical context** for techniques
+6. **Demonstrate song structure** with variables
+7. **Show visualizers** for understanding patterns
 
 ## Next Steps
 
 1. ✅ Research complete
-2. ⏳ Create `agents/StrudelCoder.md` agent blueprint
-3. ⏳ Design snippet storage system
-4. ⏳ Build MCP server for tool access
-5. ⏳ Test agent with various musical requests
+2. ✅ Stack and song structure documented
+3. ✅ Visualizers documented
+4. ⏳ Create `agents/StrudelCoder.md` agent blueprint
+5. ⏳ Design snippet storage system
+6. ⏳ Build MCP server for tool access
+7. ⏳ Test agent with various musical requests
 
 ## Sources
 
@@ -206,13 +255,18 @@ The agent can:
 - https://strudel.cc/learn/samples/
 - https://strudel.cc/learn/synths/
 - https://strudel.cc/learn/effects/
+- https://strudel.cc/learn/factories/ (stack, arrange, cat)
+- https://strudel.cc/functions/intro/ (JavaScript API)
+- https://strudel.cc/learn/visual-feedback/ (visualizers)
 
 ## Research Statistics
 
-- **Pages Scraped**: 8 comprehensive documentation pages
+- **Pages Scraped**: 11 comprehensive documentation pages
 - **Functions Documented**: 100+ core functions and effects
 - **Patterns Catalogued**: 50+ musical patterns across genres
 - **Vocabulary Terms**: 200+ musical intent → code mappings
-- **Code Examples**: 150+ working examples
+- **Code Examples**: 175+ working examples
 - **Drum Machines**: 9 classic drum machine banks
 - **Synthesis Types**: 5 synthesis methods documented
+- **Visualizers**: 7 visualization functions documented
+- **Song Structure Functions**: stack(), cat(), arrange() fully documented
