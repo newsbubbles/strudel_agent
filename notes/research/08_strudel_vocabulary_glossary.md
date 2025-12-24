@@ -273,20 +273,20 @@ $: note("~ ~ ~ ~ e g b e").s("piano")  // Response
 
 ### Question and Answer
 ```javascript
-note("c e g b, ~ ~ ~ ~ c e g c").s("piano")
+$: note("c e g b, ~ ~ ~ ~ c e g c").s("piano")
 ```
 
 ### Tension and Release
 ```javascript
 // Tension: dissonant, high filter
-note("[c,db,g]").s("sawtooth").lpf(4000)
+$: note("[c,db,g]").s("sawtooth").lpf(4000)
 // Release: consonant, lower filter  
-note("[c,e,g]").s("sawtooth").lpf(1000)
+$: note("[c,e,g]").s("sawtooth").lpf(1000)
 ```
 
 ### Build-up
 ```javascript
-sound("bd*<1 2 4 8>")
+$: sound("bd*<1 2 4 8>")
   .lpf(sine.range(200, 8000).slow(4))
   .gain("<.5 .6 .8 1>")
 ```
@@ -294,7 +294,7 @@ sound("bd*<1 2 4 8>")
 ### Drop
 ```javascript
 // Before drop: minimal
-sound("bd ~ ~ ~")
+$: sound("bd ~ ~ ~")
 // Drop: full energy
-sound("bd*4, [~ cp]*2, hh*8")
+$: sound("bd*4, [~ cp]*2, hh*8")
 ```

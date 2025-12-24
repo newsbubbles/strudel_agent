@@ -26,65 +26,65 @@
 ### Euclidean Rhythms
 ```javascript
 // Distribute events evenly
-sound("bd(3,8)")  // 3 bass drums in 8 steps
-sound("hh(5,8)")  // 5 hi-hats in 8 steps
+$: sound("bd(3,8)")  // 3 bass drums in 8 steps
+$: sound("hh(5,8)")  // 5 hi-hats in 8 steps
 ```
 
 ### Polyrhythms
 ```javascript
 // Different time signatures
-sound("{bd sd hh, cp cp cp cp}")  // 3 against 4
+$: sound("{bd sd hh, cp cp cp cp}")  // 3 against 4
 ```
 
 ### Alternation with Angle Brackets
 ```javascript
-note("<36 34 41 39>")  // One note per cycle
-note("60 <63 62 65 63>")  // First note always, second alternates
+$: note("<36 34 41 39>")  // One note per cycle
+$: note("60 <63 62 65 63>")  // First note always, second alternates
 ```
 
 ### Nested Alternation
 ```javascript
-sound("bd <sd <cp rim>>")  // Nested alternation
+$: sound("bd <sd <cp rim>>")  // Nested alternation
 ```
 
 ## Pattern Modifiers
 
 ### Multiplication (Speed Up)
 ```javascript
-sound("bd*2")           // Play bd twice per cycle
-sound("bd*4")           // Play bd four times
-sound("<bd*2 bd*4>")    // Alternate between 2 and 4
+$: sound("bd*2")           // Play bd twice per cycle
+$: sound("bd*4")           // Play bd four times
+$: sound("<bd*2 bd*4>")    // Alternate between 2 and 4
 ```
 
 ### Division (Slow Down)
 ```javascript
-note("[c e g]/2")       // Pattern takes 2 cycles
-note("[c e g]/4")       // Pattern takes 4 cycles
+$: note("[c e g]/2")       // Pattern takes 2 cycles
+$: note("[c e g]/4")       // Pattern takes 4 cycles
 ```
 
 ### Elongation with @
 ```javascript
-note("c@3 eb")          // c is 3 units long, eb is 1
-note("c@2 eb@2 g")      // c and eb are 2 units, g is 1
+$: note("c@3 eb")          // c is 3 units long, eb is 1
+$: note("c@2 eb@2 g")      // c and eb are 2 units, g is 1
 ```
 
 ### Replication with !
 ```javascript
-note("c!2 [eb,<g a bb a>]")  // c repeated twice
-sound("bd!4")                 // bd repeated 4 times
+$: note("c!2 [eb,<g a bb a>]")  // c repeated twice
+$: sound("bd!4")                 // bd repeated 4 times
 ```
 
 ## Combining Patterns
 
 ### Parallel Patterns (Comma)
 ```javascript
-sound("bd*4, hh*8")                    // Drums + hi-hat
-sound("bd*4, [~ cp]*2, [~ hh]*4")      // Three layers
+$: sound("bd*4, hh*8")                    // Drums + hi-hat
+$: sound("bd*4, [~ cp]*2, [~ hh]*4")      // Three layers
 ```
 
 ### Multi-line Patterns (Backticks)
 ```javascript
-sound(`
+$: sound(`
 bd*2, 
 - cp, 
 - - - oh, 
@@ -106,18 +106,18 @@ _$: sound("bd*4")  // Muted pattern (underscore prefix)
 
 ### Direct Selection
 ```javascript
-sound("jazz:0 jazz:1 [jazz:4 jazz:2] jazz:3*2")
+$: sound("jazz:0 jazz:1 [jazz:4 jazz:2] jazz:3*2")
 ```
 
 ### Using n() Function
 ```javascript
-n("0 1 [4 2] 3*2").sound("jazz")  // Cleaner syntax
+$: n("0 1 [4 2] 3*2").sound("jazz")  // Cleaner syntax
 ```
 
 ### Pattern Sample Numbers
 ```javascript
-n("<0 1 2 3>").sound("hh")        // Cycle through samples
-n("[0 1]*2").sound("bd")          // Alternate quickly
+$: n("<0 1 2 3>").sound("hh")        // Cycle through samples
+$: n("[0 1]*2").sound("bd")          // Alternate quickly
 ```
 
 ## Rhythmic Patterns
@@ -125,19 +125,19 @@ n("[0 1]*2").sound("bd")          // Alternate quickly
 ### Basic Drum Patterns
 ```javascript
 // Four-on-the-floor
-sound("bd*4, [~ cp]*2, hh*8")
+$: sound("bd*4, [~ cp]*2, hh*8")
 
 // Rock beat
-sound("[bd sd]*2, hh*8")
+$: sound("[bd sd]*2, hh*8")
 
 // Breakbeat
-sound("bd*2 [~ bd] bd, ~ sd ~ sd, hh*8")
+$: sound("bd*2 [~ bd] bd, ~ sd ~ sd, hh*8")
 ```
 
 ### 16-Step Sequencer Style
 ```javascript
 setcpm(90/4)
-sound(`
+$: sound(`
 [-  -  oh - ] [-  -  -  - ] [-  -  -  - ] [-  -  -  - ],
 [hh hh -  - ] [hh -  hh - ] [hh -  hh - ] [hh -  hh - ],
 [-  -  -  - ] [cp -  -  - ] [-  -  -  - ] [cp -  -  - ],
@@ -149,41 +149,41 @@ sound(`
 
 ### Letter Notation
 ```javascript
-note("c e g b")              // C E G B
-note("c# d# f# g# a#")       // Sharps
-note("db eb gb ab bb")       // Flats
+$: note("c e g b")              // C E G B
+$: note("c# d# f# g# a#")       // Sharps
+$: note("db eb gb ab bb")       // Flats
 ```
 
 ### Octave Specification
 ```javascript
-note("c2 e3 g4 b5")         // Different octaves
-note("c2 c3 c4 c5")         // Ascending octaves
+$: note("c2 e3 g4 b5")         // Different octaves
+$: note("c2 c3 c4 c5")         // Ascending octaves
 ```
 
 ### Scale Degrees
 ```javascript
-n("0 2 4 6").scale("C:minor")           // Scale degrees
-n("0 2 4 <[6,8] [7,9]>").scale("C:minor")  // With chords
+$: n("0 2 4 6").scale("C:minor")           // Scale degrees
+$: n("0 2 4 <[6,8] [7,9]>").scale("C:minor")  // With chords
 ```
 
 ## Common Patterns
 
 ### Shuffle/Swing Rhythm
 ```javascript
-n("<[4@2 4] [5@2 5] [6@2 6] [5@2 5]>*2")
-.scale("C2:mixolydian")
+$: n("<[4@2 4] [5@2 5] [6@2 6] [5@2 5]>*2")
+  .scale("C2:mixolydian")
 ```
 
 ### Alternating Patterns
 ```javascript
-sound("bd <sd cp>")              // bd, then sd, then bd, then cp
-sound("<bd sd> <hh oh>")         // Combinations alternate
+$: sound("bd <sd cp>")              // bd, then sd, then bd, then cp
+$: sound("<bd sd> <hh oh>")         // Combinations alternate
 ```
 
 ### Nested Subdivisions
 ```javascript
-sound("bd [hh hh] sd [hh bd]")     // Subdivided beats
-sound("bd [[rim rim] hh] bd cp")   // Nested subdivisions
+$: sound("bd [hh hh] sd [hh bd]")     // Subdivided beats
+$: sound("bd [[rim rim] hh] bd cp")   // Nested subdivisions
 ```
 
 ## Pro Tips
