@@ -11,9 +11,9 @@ Plays the sound of the given name.
 
 **Examples**:
 ```javascript
-sound("bd sd [~ bd] sd")
-s("bd sd [~ bd] sd")  // Short form
-s("bd sd, hh*8")      // With layering
+$: sound("bd sd [~ bd] sd")
+$: s("bd sd [~ bd] sd")  // Short form
+$: s("bd sd, hh*8")      // With layering
 ```
 
 ### note()
@@ -23,11 +23,28 @@ Sets pitch as number (MIDI) or letter notation.
 
 **Examples**:
 ```javascript
-note("48 52 55 59").sound("piano")  // MIDI numbers
-note("c e g b").sound("piano")      // Letter notation
-note("c2 e3 g4 b5").sound("piano")  // With octaves
-note("c# d# f# g# a#")               // Sharps
-note("db eb gb ab bb")               // Flats
+// MIDI numbers
+$: note("48 52 55 59").sound("piano")  
+```
+
+```javascript
+// Letter notation
+$: note("c e g b").sound("piano")      
+```
+
+```javascript
+// With octaves
+$: note("c2 e3 g4 b5").sound("piano")  
+```
+
+```javascript
+// Sharps
+$: note("c# d# f# g# a#")               
+```
+
+```javascript
+// Flats
+$: note("db eb gb ab bb")               
 ```
 
 ### n()
@@ -38,10 +55,9 @@ Selects sample number or scale degree.
 **Examples**:
 ```javascript
 // Sample selection
-n("0 1 2 3").sound("hh")
-
+$: n("0 1 2 3").sound("hh")
 // Scale degrees
-n("0 2 4 6").scale("C:minor").sound("piano")
+$: n("0 2 4 6").scale("C:minor").sound("piano")
 ```
 
 ## Tempo Control
@@ -53,9 +69,18 @@ Sets the tempo in cycles per minute.
 
 **Examples**:
 ```javascript
-setcpm(90/4)  // 90 BPM with 4 beats per cycle
-setcpm(120/4) // 120 BPM
-setcpm(60)    // 60 cycles per minute
+// 90 BPM with 4 beats per cycle
+$: setcpm(90/4)  
+```
+
+```javascript
+// 120 BPM
+$: setcpm(120/4) 
+```
+
+```javascript
+// 60 cycles per minute
+$: setcpm(60)    
 ```
 
 ### setcps()
@@ -65,9 +90,15 @@ Sets the tempo in cycles per second.
 
 **Examples**:
 ```javascript
-setcps(0.5)  // 2 seconds per cycle
-setcps(1)    // 1 second per cycle
-setcps(0.75) // 1.33 seconds per cycle
+$: setcps(0.5)  // 2 seconds per cycle
+```
+
+```javascript
+$: setcps(1)    // 1 second per cycle
+```
+
+```javascript
+$: setcps(0.75) // 1.33 seconds per cycle
 ```
 
 ## Pattern Manipulation
@@ -79,8 +110,11 @@ Speeds up a pattern by a given factor.
 
 **Examples**:
 ```javascript
-sound("bd sd").fast(2)           // Twice as fast
-sound("bd sd").fast("<1 2 4>")   // Variable speed
+$: sound("bd sd").fast(2)           // Twice as fast
+```
+
+```javascript
+$: sound("bd sd").fast("<1 2 4>")   // Variable speed
 ```
 
 ### slow()
@@ -90,8 +124,11 @@ Slows down a pattern by a given factor.
 
 **Examples**:
 ```javascript
-sound("bd sd").slow(2)           // Half speed
-sound("bd sd").slow("<1 2 4>")   // Variable speed
+$: sound("bd sd").slow(2)           // Half speed
+```
+
+```javascript
+$: sound("bd sd").slow("<1 2 4>")   // Variable speed
 ```
 
 ### rev()
@@ -99,8 +136,8 @@ Reverses the order of events in a pattern.
 
 **Examples**:
 ```javascript
-n("0 1 [4 3] 2 0 2 [~ 3] 4").sound("jazz").rev()
-sound("bd sd hh cp").rev()
+$: n("0 1 [4 3] 2 0 2 [~ 3] 4").sound("jazz").rev()
+$: sound("bd sd hh cp").rev()
 ```
 
 ### jux()
@@ -110,8 +147,8 @@ Splits pattern between left/right channels, applying modification to right.
 
 **Examples**:
 ```javascript
-n("0 1 [4 3] 2").sound("jazz").jux(rev)
-sound("bd sd hh").jux(fast(2))
+$: n("0 1 [4 3] 2").sound("jazz").jux(rev)
+$: sound("bd sd hh").jux(fast(2))
 ```
 
 ### add()
@@ -121,8 +158,8 @@ Adds a number or note pattern to existing notes (transposition).
 
 **Examples**:
 ```javascript
-note("c2 [eb3,g3]").add("<0 <1 -1>>")
-n("0 [2 4] <3 5>").add("<0 [0,2,4]>").scale("C5:minor")
+$: note("c2 [eb3,g3]").add("<0 <1 -1>>")
+$: n("0 [2 4] <3 5>").add("<0 [0,2,4]>").scale("C5:minor")
 ```
 
 ### ply()
@@ -132,8 +169,8 @@ Repeats each event in a pattern n times.
 
 **Examples**:
 ```javascript
-sound("bd sd").ply(2)              // Each event twice
-sound("bd sd").ply("<1 2 3>")      // Variable repetition
+$: sound("bd sd").ply(2)              // Each event twice
+$: sound("bd sd").ply("<1 2 3>")      // Variable repetition
 ```
 
 ### off()
@@ -145,11 +182,13 @@ Creates a copy of pattern, shifts it in time, and applies modifications.
 
 **Examples**:
 ```javascript
-n("0 [4 <3 2>] <2 3> [~ 1]")
+// Repeater spicy lead
+$: n("0 [4 <3 2>] <2 3> [~ 1]")
   .off(1/16, x => x.add(4))
   .scale("C5:minor")
 
-s("bd sd").off(1/8, x => x.speed(1.5))
+// Repeater Delay Drums
+$: s("bd sd").off(1/8, x => x.speed(1.5))
 ```
 
 ## Scales and Harmony
@@ -167,9 +206,15 @@ Interprets `n()` values as scale degrees.
 
 **Examples**:
 ```javascript
-n("0 2 4 6").scale("C:minor").sound("piano")
-n("0 2 4 <[6,8] [7,9]>").scale("C:minor")
-n("0 2 4").scale("<C:major D:mixolydian>/4")
+$: n("0 2 4 6").scale("C:minor").sound("piano")
+```
+
+```javascript
+$: n("0 2 4 <[6,8] [7,9]>").scale("C:minor")
+```
+
+```javascript
+$: n("0 2 4").scale("<C:major D:mixolydian>/4")
 ```
 
 ### chord()
@@ -179,8 +224,8 @@ Generates chord progressions.
 
 **Examples**:
 ```javascript
-chord("<Bbm9 Fm9>/4")
-chord("<C^7 Dm7 G7 C^7>")
+$: chord("<Bbm9 Fm9>/4")
+$: chord("<C^7 Dm7 G7 C^7>")
 ```
 
 ### voicing()
@@ -188,7 +233,7 @@ Applies chord voicing to notes.
 
 **Examples**:
 ```javascript
-chord("<Bbm9 Fm9>/4").voicing().s("gm_epiano1")
+$: chord("<Bbm9 Fm9>/4").voicing().s("gm_epiano1")
 ```
 
 ## Sample Banks
@@ -211,8 +256,8 @@ Selects the sound bank (drum machine).
 
 **Examples**:
 ```javascript
-sound("bd sd, hh*8").bank("RolandTR808")
-sound("bd sd").bank("<RolandTR808 RolandTR909>")
+$: sound("bd sd, hh*8").bank("RolandTR808")
+$: sound("bd sd").bank("<RolandTR808 RolandTR909>")
 ```
 
 ### samples()
@@ -252,13 +297,15 @@ Layers multiple patterns simultaneously.
 
 **Examples**:
 ```javascript
-stack(
+// Drums
+$: stack(
   s("bd*4"),
   s("~ sd ~ sd"),
   s("hh*8")
 )
 
-stack(
+// Melody
+$: stack(
   note("c2 eb2 f2 g2").s("sawtooth"),
   note("c4 eb4 g4").s("piano"),
   s("bd sd [~ bd] sd")
@@ -272,8 +319,26 @@ Defines rhythm structure for a pattern.
 
 **Examples**:
 ```javascript
-s("bd").struct("<[x*<1 2> [~@3 x]] x>")
-n("0 2 4").struct("x ~ x x")
+// Drum Roll BD as a Structure
+$: s("bd:1")
+  .lpf("<800 600 400 200>").slow(2) // Slow lowpass filter
+  .struct("<[x*<1 2> [~@3 x]] x>")  // Bar Level Structure
+  .gain(0.5) // Overall Volume
+
+// Snare Accent (same structure as BD)
+$: s("sd:1")
+  .struct("<[x*<1 2> [~@3 x]] x>") // Bar Level Structure
+  .gain(0.1) // Overall Volume
+
+// Main Snare
+
+
+// Sine Minor Progression with Structure
+$: n("<0 2 4 [5,9]>").scale("E2:minor") // Bar Level Melody
+  .attack(0.08).decay(0.1)  // Shape
+  .fm(2).phaser(4)          // Effects
+  .struct("~ x x x")        // Bar Level Stucture
+  .gain("<.5 .65 .72 .8>")  // Macro Volume Levels
 ```
 
 ### mask()
@@ -283,8 +348,8 @@ Masks or filters events (1 = play, 0 = silence).
 
 **Examples**:
 ```javascript
-s("bd sd hh cp").mask("<0 0 1 1>/16")
-n("0 2 4 6").mask("1 0 1 0")
+$: s("bd sd hh cp").mask("<0 0 1 1>/16")
+$: n("0 2 4 6").mask("1 0 1 0")
 ```
 
 ## Time Manipulation
@@ -296,8 +361,8 @@ Shifts events earlier in time.
 
 **Examples**:
 ```javascript
-sound("bd sd").early(0.5)
-sound("hh*8").early(0.125)
+$: sound("bd sd").early(0.5)
+$: sound("hh*8").early(0.125)
 ```
 
 ### late()
@@ -307,8 +372,8 @@ Shifts events later in time.
 
 **Examples**:
 ```javascript
-sound("bd sd").late("[0 .01]*4")
-sound("cp").late(0.125)
+$: sound("bd sd").late("[0 .01]*4")
+$: sound("cp").late(0.125)
 ```
 
 ### offset()
@@ -318,8 +383,8 @@ Offsets events in time.
 
 **Examples**:
 ```javascript
-chord("<Bbm9 Fm9>/4").offset(-1)
-sound("bd sd").offset(0.25)
+$: chord("<Bbm9 Fm9>/4").offset(-1)
+$: sound("bd sd").offset(0.25)
 ```
 
 ## Randomization
@@ -329,8 +394,8 @@ Random value between 0 and 1.
 
 **Examples**:
 ```javascript
-sound("hh*8").gain(rand)
-sound("bd*4").pan(rand)
+$: sound("hh*8").gain(rand)
+$: sound("bd*4").pan(rand)
 ```
 
 ### rand.range()
@@ -340,8 +405,8 @@ Random value in specified range.
 
 **Examples**:
 ```javascript
-sound("hh*8").lpf(rand.range(500, 2000))
-sound("bd*4").speed(rand.range(0.9, 1.1))
+$: sound("hh*8").lpf(rand.range(500, 2000))
+$: sound("bd*4").speed(rand.range(0.9, 1.1))
 ```
 
 ### perlin
@@ -349,7 +414,7 @@ Perlin noise for smoother randomization (0-1).
 
 **Examples**:
 ```javascript
-sound("hh*8").gain(perlin)
+$: sound("hh*8").gain(perlin)
 ```
 
 ### perlin.range()
@@ -359,7 +424,7 @@ Perlin noise in specified range.
 
 **Examples**:
 ```javascript
-sound("bd*4").gain(perlin.range(0.6, 0.9))
+$: sound("bd*4").gain(perlin.range(0.6, 0.9))
 ```
 
 ## Modulation Signals
@@ -369,8 +434,8 @@ Sine wave LFO (0-1).
 
 **Examples**:
 ```javascript
-sound("hh*16").gain(sine)
-sound("bd*4").pan(sine)
+$: sound("hh*16").gain(sine)
+$: sound("bd*4").pan(sine)
 ```
 
 ### sine.range()
@@ -380,8 +445,8 @@ Sine wave in specified range.
 
 **Examples**:
 ```javascript
-sound("hh*16").lpf(sine.range(500, 2000))
-note("c2").fm(sine.range(0, 8).slow(4))
+$: sound("hh*16").lpf(sine.range(500, 2000))
+$: note("c2").fm(sine.range(0, 8).slow(4))
 ```
 
 ### saw, square, tri
@@ -389,9 +454,9 @@ Other waveform LFOs (0-1).
 
 **Examples**:
 ```javascript
-sound("hh*16").gain(saw)
-sound("bd*4").pan(square)
-sound("sd*4").lpf(tri.range(200, 4000))
+$: sound("hh*16").gain(saw)
+$: sound("bd*4").pan(square)
+$: sound("sd*4").lpf(tri.range(200, 4000))
 ```
 
 ## Utility Functions
@@ -403,8 +468,8 @@ Generates ascending number sequence.
 
 **Examples**:
 ```javascript
-n(run(8)).scale("C:minor")  // 0 1 2 3 4 5 6 7
-n(run(4)).sound("bd")       // Cycle through 4 samples
+$: n(run(8)).scale("C:minor")  // 0 1 2 3 4 5 6 7
+$: n(run(4)).sound("bd")       // Cycle through 4 samples
 ```
 
 ### irand()
@@ -414,8 +479,8 @@ Random integer.
 
 **Examples**:
 ```javascript
-n(irand(8)).scale("C:minor")
-n(irand(4)).sound("hh")
+$: n(irand(8)).scale("C:minor")
+$: n(irand(4)).sound("hh")
 ```
 
 ### choose()
@@ -425,6 +490,6 @@ Randomly choose from array.
 
 **Examples**:
 ```javascript
-sound(choose(["bd", "sd", "hh", "cp"]))
-n(choose([0, 2, 4, 7])).scale("C:minor")
+$: sound(choose(["bd", "sd", "hh", "cp"]))
+$: n(choose([0, 2, 4, 7])).scale("C:minor")
 ```

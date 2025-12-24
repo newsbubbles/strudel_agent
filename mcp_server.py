@@ -23,11 +23,12 @@ mcp = FastMCP("Strudel Music Assistant")
 BASE_DIR = Path(__file__).parent
 PROJECTS_DIR = BASE_DIR / "projects"
 KNOWLEDGE_DIR = BASE_DIR / "knowledge"
+KNOWN_PACKS_DIR = BASE_DIR / "known_packs"
 
 # Ensure directories exist
 PROJECTS_DIR.mkdir(exist_ok=True)
 KNOWLEDGE_DIR.mkdir(exist_ok=True)
-
+KNOWN_PACKS_DIR.mkdir(exist_ok=True)
 
 # ============================================================================
 # Response Models
@@ -1389,7 +1390,7 @@ def search_packs(request: SearchPacksRequest) -> dict:
     Returns:
         Search results with pack information, GitHub URLs, and tags
     """
-    known_packs_dir = BASE_DIR / "notes" / "known_packs"
+    known_packs_dir = KNOWN_PACKS_DIR
     
     if not known_packs_dir.exists():
         return {"error": "Known packs directory not found", "results": []}
@@ -1445,7 +1446,7 @@ def get_pack_details(request: GetPackDetailsRequest) -> dict:
     Returns:
         Full documentation for requested packs
     """
-    known_packs_dir = BASE_DIR / "notes" / "known_packs"
+    known_packs_dir = KNOWN_PACKS_DIR
     
     if not known_packs_dir.exists():
         return {"error": "Known packs directory not found", "packs": []}

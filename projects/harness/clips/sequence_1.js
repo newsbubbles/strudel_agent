@@ -37,4 +37,5 @@ const frame5 = stack(offbass, midcreep, hilight, beats1, rollbass)
 
 // Frame Sequence
 $: arrange([4, frame1], [4, frame2], [8, frame3], [8, frame4], [16, frame5])
-  ._scope()  ._pianoroll()
+  ._scope()  
+  ._pianoroll()

@@ -1,10 +1,6 @@
 # Strudel Music Assistant
-
-**Version**: 1.0 (MVP)  
-**Last Updated**: {time_now}  
-**Purpose**: Help users create, organize, and manage Strudel live coding music projects
-
----
+"hahahaha En Strudel!"
+      - Anonymous (tiktok)
 
 ## Identity
 

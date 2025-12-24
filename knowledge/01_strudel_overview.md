@@ -93,7 +93,7 @@ A compact syntax for representing musical patterns:
 
 ```javascript
 // Define chord progression
-let chords = chord("<Bbm9 Fm9>/4").dict('ireal')
+const chords = chord("<Bbm9 Fm9>/4").dict('ireal')
 
 // Combine multiple layers
 stack(
