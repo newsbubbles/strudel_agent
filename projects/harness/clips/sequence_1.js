@@ -1,3 +1,5 @@
+// {"name": "Harness Sequence 1", "tags": ["hip hop", "base set", "jazzy"], "tempo": 90, "description": "Great for a drone-like base to build on"}
+
 // Off Bass (yeah off beat, weird)
 const offbass = stack(
   note("2 2 2 ~ 2 2 2 ~ 2 4 1 ~").scale("C3:major").s("square").fm(4).orbit(2).attack(0.05).decay(0),

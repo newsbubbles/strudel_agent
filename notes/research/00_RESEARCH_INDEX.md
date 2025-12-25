@@ -202,6 +202,50 @@ This folder contains comprehensive research on Strudel live coding for music, ga
 - **Troubleshooting**: Solutions for common mix problems
 - **Advanced techniques**: Parallel compression, multi-band processing, stereo width
 
+### 14_trance_production_guide.md
+**Purpose**: Trance music production techniques  
+**Status**: ✅ Complete (Added 2025-12-23)  
+**Content**:
+- **Essential sounds**: Supersaw leads, plucks, pads, rolling bass, trance kicks
+- **Synthesis techniques**: 5-7 layer supersaws, detuning strategies, FM leads
+- **Trance techniques**: Filter sweeps, sidechain compression, trance gates, arpeggios, risers
+- **Complete examples**: Progressive trance (130 BPM), uplifting breakdown, psytrance (142 BPM)
+- **Arrangement structure**: Classic trance structure with buildups, drops, breakdowns
+- **Production tips**: Sound design, mixing, arrangement strategies
+- **Tempo guide**: Progressive (128-132), Uplifting (135-140), Psytrance (138-145)
+- **Quick reference**: Essential sounds, key techniques, typical parameter values
+- **Subgenre coverage**: Progressive, uplifting, psytrance, tech trance, vocal trance
+
+### 15_dubstep_production_guide.md
+**Purpose**: Dubstep music production techniques  
+**Status**: ✅ Complete (Added 2025-12-23)  
+**Content**:
+- **Essential sounds**: Wobble bass, sub bass, reese bass, growls, screeches
+- **Wobble techniques**: LFO filter modulation with sine/saw/random patterns
+- **Bass layering**: Sub + mid + high frequency stacks
+- **FM bass synthesis**: Metallic growls and evolving timbres
+- **Distortion techniques**: Heavy distortion, bit crushing, sample rate reduction
+- **Complete examples**: Classic dubstep, brostep, riddim, melodic dubstep
+- **Half-time drums**: Kick patterns, syncopated snares, sparse percussion
+- **Arrangement structure**: Build → drop → breakdown → second drop
+- **Production tips**: Sound design, mixing, arrangement strategies
+- **Subgenre coverage**: Classic dubstep, brostep, riddim, melodic dubstep
+- **Quick reference**: Essential sounds, key techniques, typical parameter values
+
+### 16_transitions_and_arrangement_guide.md
+**Purpose**: Complete guide to transitions between sections  
+**Status**: ✅ Complete (Added 2025-12-23)  
+**Content**:
+- **Strudel transition techniques**: Using `arrange()`, `lastOf()`, `firstOf()`, `cat()`, filter sweeps, silence/dropouts, `pick()`, `pickRestart()`
+- **Production techniques**: Drum fills (snare rolls, tom fills, layered, Euclidean), risers (white noise, pitched, layered, rhythmic), reverse cymbals, impacts, downlifters, volume automation, vocal risers, glitch transitions, harmonic transitions
+- **Complete examples**: EDM buildup to drop, breakdown transition, section changes with fills, enhanced user code example
+- **Transition timing guide**: Typical lengths and placement (every 4/8/16/32 cycles)
+- **Transition combinations**: Low→high energy, high→low energy, same energy section changes
+- **Advanced techniques**: Dynamic transitions with `segment()`, polyrhythmic transitions, call and response, tension and release
+- **Quick reference**: Essential transition elements, formulas for basic/epic buildups, breakdown transitions
+- **9 core transition types**: Drum fills, risers/sweeps, reverse cymbals, impacts, downlifters, volume automation, vocal risers, glitch effects, harmonic transitions
+- **4 complete working examples** with full code
+
 ---
 
 ## Key Findings for Agent Development
@@ -310,6 +354,21 @@ Professional mixing requires understanding:
 - Combining compression and clipping for loudness
 - Genre-specific mastering approaches
 
+### 14. Genre-Specific Production
+Different genres require specialized techniques:
+- **Trance**: Supersaw layering, filter sweeps, long buildups, heavy sidechain
+- **Dubstep**: LFO wobbles, bass layering, half-time drums, aggressive distortion
+- Each genre has specific tempo, sound design, and arrangement patterns
+
+### 15. Professional Transitions
+Transitions are critical for polished arrangements:
+- **Multiple approaches**: Strudel-specific functions + production techniques
+- **Layering**: Combine fills + risers + filters for maximum impact
+- **Timing**: Use appropriate lengths (1-8 cycles) based on energy change
+- **Energy management**: Build tension with risers, release with drops
+- **Variety**: 9+ transition types for different musical contexts
+- **Automation**: Use `sine.range()` for smooth parameter sweeps
+
 ---
 
 ## Agent Design Implications
@@ -323,6 +382,8 @@ The agent needs to:
 5. **Recognize glitch/experimental requests** and apply appropriate effects
 6. **Understand mixing requests** ("make it louder", "add space", "tighten the kick")
 7. **Understand synthesis requests** ("warmer", "brighter", "more harmonics")
+8. **Recognize genre-specific requests** ("trance lead", "dubstep wobble", "supersaw")
+9. **Recognize transition requests** ("add a buildup", "smooth transition", "drop")
 
 ### For Code Generation
 The agent should:
@@ -340,6 +401,8 @@ The agent should:
 12. **Add master bus processing** with `all()` when appropriate
 13. **Choose appropriate synthesis method** (basic waveforms, FM, additive, wavetable)
 14. **Combine oscillators with filters** for subtractive synthesis
+15. **Apply genre-specific techniques** (supersaw for trance, wobble for dubstep)
+16. **Add professional transitions** between sections (fills, risers, sweeps, impacts)
 
 ### For Teaching
 The agent can:
@@ -356,6 +419,8 @@ The agent can:
 11. **Demonstrate mastering workflow** step-by-step
 12. **Explain synthesis architecture** (oscillators → filters → effects)
 13. **Cross-reference documentation** (e.g., "filters are in effects reference")
+14. **Teach genre-specific production** (trance buildups, dubstep bass design)
+15. **Demonstrate transition techniques** (buildups, breakdowns, fills, risers)
 
 ---
 
@@ -373,7 +438,8 @@ The agent can:
 1. **Patterns** → `02_mini_notation_cheatsheet.md`
 2. **Functions** → `03_core_functions_reference.md`
 3. **Song Structure** → `09_stack_and_song_structure.md`
-4. **Variation** → `11_conditional_modifiers_reference.md`
+4. **Transitions** → `16_transitions_and_arrangement_guide.md`
+5. **Variation** → `11_conditional_modifiers_reference.md`
 
 ### Sound Sources
 1. **Synthesis** → `06_synths_reference.md`
@@ -385,7 +451,14 @@ The agent can:
 1. **Musical Patterns** → `07_musical_patterns_library.md`
 2. **Vocabulary** → `08_strudel_vocabulary_glossary.md`
 3. **Mixing** → `13_mastering_mixing_guide.md`
-4. **Visuals** → `10_visualizers_reference.md`
+4. **Transitions** → `16_transitions_and_arrangement_guide.md`
+5. **Visuals** → `10_visualizers_reference.md`
+
+### Genre-Specific
+1. **Trance** → `14_trance_production_guide.md`
+2. **Dubstep** → `15_dubstep_production_guide.md`
+3. **Techno/Ambient/Jazz/Dub** → `07_musical_patterns_library.md`
+4. **Glitch/IDM/Breakcore** → `12_glitch_effects_genre_guide.md`
 
 ---
 
@@ -398,10 +471,13 @@ The agent can:
 5. ✅ Glitch effects and genre guide documented
 6. ✅ Mastering and mixing guide documented
 7. ✅ Synth reference verified and enhanced
-8. ⏳ Create `agents/StrudelCoder.md` agent blueprint
-9. ⏳ Design snippet storage system
-10. ⏳ Build MCP server for tool access
-11. ⏳ Test agent with various musical requests
+8. ✅ Trance production guide created
+9. ✅ Dubstep production guide created
+10. ✅ Transitions and arrangement guide created
+11. ⏳ Create `agents/StrudelCoder.md` agent blueprint
+12. ⏳ Design snippet storage system
+13. ⏳ Build MCP server for tool access
+14. ⏳ Test agent with various musical requests
 
 ---
 
@@ -422,6 +498,7 @@ The agent can:
 - https://strudel.cc/learn/conditional-modifiers/ (conditional modifiers)
 - https://strudel.cc/learn/time-modifiers/ (time-based modifiers)
 - https://strudel.cc/recipes/recipes/ (sample chopping, wavetable synthesis)
+- https://tidalcycles.org/docs/reference/transitions/ ✅ Verified 2025-12-23 (Tidal transitions)
 
 ### Community Resources
 - https://github.com/eefano/strudel-songs-collection (verified working examples)
@@ -430,16 +507,25 @@ The agent can:
 - https://club.tidalcycles.org/t/master-bus-compression-limiter/6005 (mastering discussion)
 - https://www.youtube.com/watch?v=5ivEVNZLDQs (glitch effect tutorial)
 - https://www.youtube.com/watch?v=dcmwqqzJubA (break chopping tutorial)
+- https://www.reddit.com/r/edmproduction/ (EDM production techniques)
+- https://www.edmprod.com/tension/ (tension and energy guide)
+- https://www.morningdewmedia.com/transition-techniques-in-music-production/ (transition techniques)
+
+### Genre Production Knowledge
+- EDM production principles (trance, dubstep, buildups, drops)
+- Synthesis techniques (supersaw, wobble bass, FM)
+- Mixing strategies (sidechain, filter automation)
+- Transition techniques (risers, fills, sweeps, impacts)
 
 ---
 
 ## Research Statistics
 
-- **Pages Scraped**: 15+ comprehensive documentation pages
+- **Pages Scraped**: 18+ comprehensive documentation pages
 - **Functions Documented**: 170+ core functions and effects
 - **Patterns Catalogued**: 60+ musical patterns across genres
 - **Vocabulary Terms**: 200+ musical intent → code mappings
-- **Code Examples**: 350+ working examples
+- **Code Examples**: 500+ working examples
 - **Drum Machines**: 9 classic drum machine banks
 - **Synthesis Types**: 6 synthesis methods (waveforms, FM, additive, wavetable, ZZFX, noise)
 - **Visualizers**: 7 visualization functions documented
@@ -449,6 +535,10 @@ The agent can:
 - **Song Structure Functions**: stack(), cat(), arrange() fully documented
 - **Community Examples**: 7+ verified songs from GitHub
 - **Synthesis Techniques**: 20+ sound design examples (bass, pads, leads, percussion, experimental)
+- **Genre Guides**: 2 comprehensive production guides (trance, dubstep)
+- **Genre Examples**: 8+ complete track examples across trance and dubstep subgenres
+- **Transition Techniques**: 9 core transition types with 50+ examples
+- **Transition Examples**: 4 complete working transitions with full code
 
 ---
 
@@ -469,5 +559,8 @@ The agent can:
 | 11_conditional_modifiers_reference.md | ✅ Complete | 2025-12-22 | - |
 | 12_glitch_effects_genre_guide.md | ✅ Complete | 2025-12-22 | - |
 | 13_mastering_mixing_guide.md | ✅ Complete | 2025-12-23 | New research, all() function discovered |
+| 14_trance_production_guide.md | ✅ Complete | 2025-12-23 | Genre-specific production guide |
+| 15_dubstep_production_guide.md | ✅ Complete | 2025-12-23 | Genre-specific production guide |
+| 16_transitions_and_arrangement_guide.md | ✅ Complete | 2025-12-23 | Comprehensive transition techniques |
 
-**All research files are complete and verified against official documentation.**
+**All research files are complete and verified against official documentation or established production techniques.**

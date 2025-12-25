@@ -106,6 +106,9 @@ s("break:0").chop(8)
 s("break:0").chop("<4 8 16>")
 ```
 
+### Live Editing Mode
+- As the output script approaches 50 lines, treat the job of editing the song more like making surgical tweaks to what is already there rather than adding more layers
+
 ---
 
 ## Working with Context
