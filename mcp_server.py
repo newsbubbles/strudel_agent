@@ -326,7 +326,7 @@ class CreateTemplateRequest(BaseModel):
     template_code: str = Field(
         description="Strudel code with {variable} placeholders for parameterization"
     )
-    schema: dict = Field(
+    input_schema: dict = Field(
         description="Schema defining variables. Each key is a variable name with dict containing: type (string/integer/float/boolean/array), default, description, and optional constraints (min, max, options, pattern, required, min_items, max_items)"
     )
     metadata: dict = Field(
@@ -379,7 +379,7 @@ class GenerateFromTemplateRequest(BaseModel):
         default_factory=dict,
         description="Variable values to fill into template. Keys are variable names, values are the actual values to use."
     )
-    validate: bool = Field(
+    do_validation: bool = Field(
         default=True,
         description="Whether to validate variables against schema before generating"
     )
@@ -397,7 +397,7 @@ class UpdateTemplateRequest(BaseModel):
         default=None,
         description="Optional new template code. If None, keeps existing."
     )
-    schema: Optional[dict] = Field(
+    input_schema: Optional[dict] = Field(
         default=None,
         description="Optional new schema. If None, keeps existing."
     )
@@ -1519,7 +1519,7 @@ def create_new_template(request: CreateTemplateRequest) -> dict:
     template_yaml = {
         'metadata': request.metadata,
         'template': request.template_code,
-        'schema': request.schema
+        'schema': request.input_schema
     }
     
     if request.includes:
@@ -1667,7 +1667,7 @@ def generate_from_template(request: GenerateFromTemplateRequest) -> dict:
         request.project_id,
         request.template_id,
         request.variables,
-        request.validate
+        request.do_validation
     )
     
     if result['errors']:
@@ -1720,8 +1720,8 @@ def update_template(request: UpdateTemplateRequest) -> dict:
     if request.template_code is not None:
         template_data['template'] = request.template_code
     
-    if request.schema is not None:
-        template_data['schema'] = request.schema
+    if request.input_schema is not None:
+        template_data['schema'] = request.input_schema
     
     if request.metadata is not None:
         template_data['metadata'] = request.metadata
