@@ -58,7 +58,7 @@ A compact syntax for representing musical patterns:
 
 ### 2. Synthesizers
 - Generate sounds on the fly
-- Basic waveforms: sine, sawtooth, square, triangle
+- Basic waveforms: sine, sawtooth, square, square
 - Advanced synthesis: FM, additive, wavetable
 - ZZFX integration for compact synth engine
 

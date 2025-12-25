@@ -14,7 +14,7 @@ const midcreep = note("<[6 6 4 4] [7 7 5 5]>").scale("C2:major").s("sawtooth")
   .gain(1.2)
 
 // +ocatve Hilight with a smooth attack and tremolo
-const hilight = note("6@3 ~").scale("C4:major").s("triangle")
+const hilight = note("6@3 ~").scale("C4:major").s("square")
   .fm(4).orbit(4)
   .attack(.1)
   .tremsync(4)

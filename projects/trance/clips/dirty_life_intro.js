@@ -10,7 +10,7 @@ sound("noise").gain(0.1).hpf(sine.range(50,2000).slow(16)).lpf(4000).slow(32).ro
 note("c1 eb1 ~ ~ ~ f1 g1 ~ ~ ~").s("sawtooth").lpf(150).gain(0.4).attack(0.1).slow(4)
 
 // Arp - enter after 16 bars, building
-note("~ ~ c4 <eb4 g4> [bb4 g4] <f4 ab4> ~ ~ ~ ~").s("triangle").lpf(800).gain(0.3).fast(2).delay(0.3).slow(2)
+note("~ ~ c4 <eb4 g4> [bb4 g4] <f4 ab4> ~ ~ ~ ~").s("square").lpf(800).gain(0.3).fast(2).delay(0.3).slow(2)
 
 // Drums fade in at 24 bars
 sound("bd*4").gain(0).fast(1).segment(24,8).gain(0.9).room(0.1)

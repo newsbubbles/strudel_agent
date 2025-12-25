@@ -66,7 +66,7 @@ Layering multiple patterns to play simultaneously (using `,` or `stack()`).
 |---------------|--------------|-------------|
 | "Bright sound" | `.lpf(8000)` or `.s("sawtooth")` | High frequencies |
 | "Dark sound" | `.lpf(400)` | Low frequencies |
-| "Warm" | `.s("triangle")` | Soft waveform |
+| "Warm" | `.s("square")` | Soft waveform |
 | "Harsh" | `.s("sawtooth")` or `.distort(2)` | Aggressive |
 | "Clean" | `.s("sine")` | Pure tone |
 | "Dirty" | `.distort(4)` | Distorted |
@@ -214,7 +214,7 @@ Layering multiple patterns to play simultaneously (using `,` or `stack()`).
 ### "Make it darker"
 - Lower filter: `.lpf(400)`
 - Minor scale: `.scale("C:minor")`
-- Less brightness: `.s("triangle")`
+- Less brightness: `.s("square")`
 
 ### "Make it brighter"
 - Higher filter: `.lpf(8000)`
@@ -245,7 +245,7 @@ Layering multiple patterns to play simultaneously (using `,` or `stack()`).
 - **Sine**: Pure, fundamental tone
 - **Sawtooth**: Bright, all harmonics
 - **Square**: Hollow, odd harmonics
-- **Triangle**: Soft, few harmonics
+- **square**: Soft, few harmonics
 
 ### Synthesis Techniques
 - **Subtractive**: Start bright, filter down (`.s("sawtooth").lpf(800)`)

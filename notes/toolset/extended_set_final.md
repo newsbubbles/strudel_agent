@@ -549,7 +549,7 @@ $: n("0 1 2 3").sound("bd")
 **Source**: Curated from `notes/research/06_synths_reference.md`
 
 **Content**:
-- Basic waveforms (sine, sawtooth, square, triangle)
+- Basic waveforms (sine, sawtooth, square, square)
 - Noise generators (white, pink, brown, crackle)
 - Additive synthesis (partials, phases)
 - Vibrato (vib, vibmod)

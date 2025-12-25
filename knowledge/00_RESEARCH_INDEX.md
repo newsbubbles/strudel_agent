@@ -70,7 +70,7 @@ This folder contains comprehensive research on Strudel live coding for music, ga
 ### 06_synths_reference.md
 **Purpose**: Synthesis engine documentation  
 **Content**:
-- Basic waveforms (sine, saw, square, triangle)
+- Basic waveforms (sine, saw, square, square)
 - Noise generators (white, pink, brown)
 - Additive synthesis (partials, phases)
 - Vibrato

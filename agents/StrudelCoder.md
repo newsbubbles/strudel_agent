@@ -151,7 +151,7 @@ Use this mental mapping when interpreting user requests:
 
 ### Timbre & Tone
 - "bright" → High filter cutoff, sawtooth wave
-- "dark" → Low filter cutoff, triangle wave
+- "dark" → Low filter cutoff, square wave
 - "warm" → Moderate filter, slight resonance
 - "harsh" → High resonance, distortion
 - "clean" → Sine wave, no distortion

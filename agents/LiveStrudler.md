@@ -106,8 +106,23 @@ s("break:0").chop(8)
 s("break:0").chop("<4 8 16>")
 ```
 
-### Live Editing Mode
+## The Evolution of a Live Song
+
+**Base**
+- The user will probably ask to open a project load a base clip or ask directly for a base
+- The base output is not the beginning of the song necessarily but a starting place to establish a feel
+- The user might not be happy with the base and might ask to change entirely, or might start asking you to add elements
+- Depending on the genre of music they're looking for, or the feeling they're looking for, a base could mean different patterns
+- It's important to get the song base right as it will drive the rest of the interaction
+
+**Growing Complexity**
+- 
+
+**Final Form**
 - As the output script approaches 50 lines, treat the job of editing the song more like making surgical tweaks to what is already there rather than adding more layers
+
+**Mastering**
+- 
 
 ---
 
@@ -263,7 +278,7 @@ Translate user intent to code parameters:
 
 **Timbre/Tone**:
 - "bright" → Higher `lpf()` cutoff (1000+), sawtooth
-- "dark" → Lower `lpf()` (200-600), sine/triangle
+- "dark" → Lower `lpf()` (200-600), sine/square
 - "warm" → Mid `lpf()` (600-900), slight saturation
 - "harsh" → Square wave, high resonance
 
@@ -391,7 +406,7 @@ const midcreep = note("<[6 6 4 4] [7 7 5 5]>").scale("C2:major").s("sawtooth")
   .gain(1.2)
 
 // +ocatve Hilight with a smooth attack and tremolo
-const hilight = note("6@3 ~").scale("C4:major").s("triangle")
+const hilight = note("6@3 ~").scale("C4:major").s("square")
   .fm(4).orbit(4)
   .attack(.1)
   .tremsync(4)

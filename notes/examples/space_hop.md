@@ -11,7 +11,7 @@ $: sound(`
 
 // Basic up arpeggio
 $: n("0 2 4 7").scale("C4:minor")
-  .s("triangle")
+  .s("square")
   .release(.5).gain(.7)
 
 // Up and down / up and down

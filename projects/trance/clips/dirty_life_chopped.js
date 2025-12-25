@@ -11,7 +11,7 @@ $: sound("oh*2").chop(4).gain(0.3).lpf(8000).tremolo(4)
 $: note("c1 eb1 f1 g1").s("sawtooth").lpf(200).gain(0.7).attack(0.05).decay(0.2)
 
 // Arp - uplifting with delay and phaser
-$: note("c4 <eb4 g4> [bb4 g4] <f4 ab4>").s("triangle").lpf(1200).gain(0.6).fast(4).delay(0.25).phaser(0.3)
+$: note("c4 <eb4 g4> [bb4 g4] <f4 ab4>").s("square").lpf(1200).gain(0.6).fast(4).delay(0.25).phaser(0.3)
 
 // Pad - atmospheric ribbon-like with chop and chorus delay
 $: note("c3 [eb3 g3] <f3 ab3> bb3").s("sawtooth").lpf(600).room(0.8).chop(4).delay("0.3:0.25:0.4").gain(0.4).phaser(0.4)

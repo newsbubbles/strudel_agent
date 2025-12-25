@@ -120,7 +120,7 @@ $: note("<[c2 c3]*4 [bb1 bb2]*4 [f2 f3]*4 [eb2 eb3]*4>")
 
 // Octave jumps
 $: note("c2 c3 <bb1 bb2> <f2 f3>")
-  .s("sawtooth,triangle")
+  .s("sawtooth,square")
   .lpf(600)
 ```
 
@@ -165,7 +165,7 @@ $: n("0 2 3 4, 3 5 6 7, 5 7 8 9, 7 9 10 11")
 ```javascript
 // Basic up arpeggio
 $: n("0 2 4 7").scale("C4:minor")
-  .s("triangle")
+  .s("square")
   .release(.5)
 
 // Up and down / up and down
@@ -347,7 +347,7 @@ $: n("0 2 4 6").scale("C4:minor")
 $: n("0 [4 <3 2>] <2 3> [~ 1]")
   .off(1/16, x => x.add(4))  // Add fourth above
   .scale("C5:minor")
-  .s("triangle")
+  .s("square")
 
 // Delayed variation
 $: sound("bd sd [~ bd] sd")
@@ -406,7 +406,7 @@ $: note("<c2 c2 bb1 f2>*4")
 setcpm(30/4)
 
 $: note("<[c2,e2,g2] [d2,f2,a2] [e2,g2,b2] [f2,a2,c3]>")
-   .s("sawtooth,triangle")
+   .s("sawtooth,square")
    .attack(2)
    .release(3)
    .lpf(1500)
