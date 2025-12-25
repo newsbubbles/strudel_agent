@@ -234,7 +234,6 @@ const bass = note("<c1 eb1 f1 g1>")
 
 // Orbit 3: Pads/atmosphere (lots of reverb)
 const pads = note("<c3 eb3 g3>")
-  .s("sine")
   .orbit(3)
   .room(0.8)
   .roomsize(5)

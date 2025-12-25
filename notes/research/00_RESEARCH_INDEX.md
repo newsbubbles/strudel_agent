@@ -1,7 +1,7 @@
 # Strudel Research Index
 
 **Research Completed**: 2025-12-22  
-**Updated**: 2025-12-23  
+**Updated**: 2025-12-25  
 **Verification**: All documentation verified against official sources
 
 This folder contains comprehensive research on Strudel live coding for music, gathered from official documentation and verified community examples.
@@ -246,6 +246,22 @@ This folder contains comprehensive research on Strudel live coding for music, ga
 - **9 core transition types**: Drum fills, risers/sweeps, reverse cymbals, impacts, downlifters, volume automation, vocal risers, glitch effects, harmonic transitions
 - **4 complete working examples** with full code
 
+### 17_ambient_music_production_guide.md
+**Purpose**: Comprehensive guide to ambient music production  
+**Status**: ✅ Complete (Added 2025-12-25)  
+**Content**:
+- **Core principles**: Texture over melody, space as instrument, slow evolution, system-based composition, layered complexity
+- **Sound design**: Drones (sine, filtered noise, detuned, FM), pads (basic, three-layer system, evolving ADSR, wavetable), textures (vinyl crackle, noise sweeps, granular, metallic)
+- **Generative techniques**: Phase looping (Music for Airports style), probabilistic patterns, Perlin noise modulation, Euclidean ambient, slow evolution
+- **Ambient motifs**: Minimal melodic motifs (single note, two-note, three-note), pentatonic scales, modal harmony (Dorian, Mixolydian, Lydian), arpeggios, suspended chords
+- **Space and effects**: Heavy reverb, evolving reverb, ping-pong delay, long feedback delay, chorus/width, panning movement
+- **Complete compositions**: 5 full ambient examples (Eno-style, dark ambient, bright ambient, minimal ambient, evolving soundscape)
+- **Arrangement techniques**: Layered introduction, evolving sections, generative long-form
+- **Production tips**: Sound design, mixing, composition tips with specific parameter values
+- **Ambient subgenres**: Dark ambient, space ambient, drone ambient with full examples
+- **Brian Eno techniques**: Incommensurable loops, phase relationships, system-based composition
+- **Quick reference**: Essential functions, chord progressions, scales
+
 ---
 
 ## Key Findings for Agent Development
@@ -358,6 +374,7 @@ Professional mixing requires understanding:
 Different genres require specialized techniques:
 - **Trance**: Supersaw layering, filter sweeps, long buildups, heavy sidechain
 - **Dubstep**: LFO wobbles, bass layering, half-time drums, aggressive distortion
+- **Ambient**: Phase looping, Perlin modulation, heavy reverb, slow evolution
 - Each genre has specific tempo, sound design, and arrangement patterns
 
 ### 15. Professional Transitions
@@ -369,21 +386,32 @@ Transitions are critical for polished arrangements:
 - **Variety**: 9+ transition types for different musical contexts
 - **Automation**: Use `sine.range()` for smooth parameter sweeps
 
+### 16. Ambient Music Philosophy
+Ambient music requires a different approach:
+- **Texture over melody**: Focus on timbral quality and atmosphere
+- **System-based composition**: Set up generative systems that evolve organically
+- **Space as instrument**: Reverb and delay are compositional elements
+- **Slow evolution**: Changes happen over very long periods (16-48 cycles)
+- **Incommensurable loops**: Use prime number cycle lengths (5, 7, 11, 13) for phase relationships
+- **Perlin modulation**: Smooth, organic parameter evolution
+- **Modal harmony**: Dorian, Mixolydian, Lydian for ambiguous tonality
+
 ---
 
 ## Agent Design Implications
 
 ### For Understanding User Intent
 The agent needs to:
-1. **Recognize musical terminology** ("groovy", "bright", "punchy", "glitchy", "loud", "polished", etc.)
+1. **Recognize musical terminology** ("groovy", "bright", "punchy", "glitchy", "loud", "polished", "atmospheric", "droning", etc.)
 2. **Map to Strudel code** using vocabulary glossary
 3. **Understand context** (genre, mood, energy level)
 4. **Ask clarifying questions** when intent is ambiguous
 5. **Recognize glitch/experimental requests** and apply appropriate effects
 6. **Understand mixing requests** ("make it louder", "add space", "tighten the kick")
 7. **Understand synthesis requests** ("warmer", "brighter", "more harmonics")
-8. **Recognize genre-specific requests** ("trance lead", "dubstep wobble", "supersaw")
+8. **Recognize genre-specific requests** ("trance lead", "dubstep wobble", "supersaw", "ambient drone")
 9. **Recognize transition requests** ("add a buildup", "smooth transition", "drop")
+10. **Recognize ambient requests** ("evolving", "meditative", "spacious", "generative")
 
 ### For Code Generation
 The agent should:
@@ -401,8 +429,9 @@ The agent should:
 12. **Add master bus processing** with `all()` when appropriate
 13. **Choose appropriate synthesis method** (basic waveforms, FM, additive, wavetable)
 14. **Combine oscillators with filters** for subtractive synthesis
-15. **Apply genre-specific techniques** (supersaw for trance, wobble for dubstep)
+15. **Apply genre-specific techniques** (supersaw for trance, wobble for dubstep, phase loops for ambient)
 16. **Add professional transitions** between sections (fills, risers, sweeps, impacts)
+17. **Use generative techniques** for ambient (Perlin modulation, incommensurable loops, probabilistic patterns)
 
 ### For Teaching
 The agent can:
@@ -419,8 +448,9 @@ The agent can:
 11. **Demonstrate mastering workflow** step-by-step
 12. **Explain synthesis architecture** (oscillators → filters → effects)
 13. **Cross-reference documentation** (e.g., "filters are in effects reference")
-14. **Teach genre-specific production** (trance buildups, dubstep bass design)
+14. **Teach genre-specific production** (trance buildups, dubstep bass design, ambient drones)
 15. **Demonstrate transition techniques** (buildups, breakdowns, fills, risers)
+16. **Teach generative techniques** (Brian Eno's phase looping, system-based composition)
 
 ---
 
@@ -457,8 +487,9 @@ The agent can:
 ### Genre-Specific
 1. **Trance** → `14_trance_production_guide.md`
 2. **Dubstep** → `15_dubstep_production_guide.md`
-3. **Techno/Ambient/Jazz/Dub** → `07_musical_patterns_library.md`
-4. **Glitch/IDM/Breakcore** → `12_glitch_effects_genre_guide.md`
+3. **Ambient** → `17_ambient_music_production_guide.md`
+4. **Techno/Jazz/Dub** → `07_musical_patterns_library.md`
+5. **Glitch/IDM/Breakcore** → `12_glitch_effects_genre_guide.md`
 
 ---
 
@@ -474,10 +505,11 @@ The agent can:
 8. ✅ Trance production guide created
 9. ✅ Dubstep production guide created
 10. ✅ Transitions and arrangement guide created
-11. ⏳ Create `agents/StrudelCoder.md` agent blueprint
-12. ⏳ Design snippet storage system
-13. ⏳ Build MCP server for tool access
-14. ⏳ Test agent with various musical requests
+11. ✅ Ambient music production guide created
+12. ⏳ Create `agents/StrudelCoder.md` agent blueprint
+13. ⏳ Design snippet storage system
+14. ⏳ Build MCP server for tool access
+15. ⏳ Test agent with various musical requests
 
 ---
 
@@ -502,6 +534,7 @@ The agent can:
 
 ### Community Resources
 - https://github.com/eefano/strudel-songs-collection (verified working examples)
+- https://gist.github.com/therebelrobot/fe161e21a8bffc5325891d7ad62ec49b (Strudel learning course)
 - https://strudel.cc/bakery/ (community patterns)
 - https://club.tidalcycles.org/c/strudel/ (Tidal Club forum)
 - https://club.tidalcycles.org/t/master-bus-compression-limiter/6005 (mastering discussion)
@@ -511,21 +544,30 @@ The agent can:
 - https://www.edmprod.com/tension/ (tension and energy guide)
 - https://www.morningdewmedia.com/transition-techniques-in-music-production/ (transition techniques)
 
+### Ambient Music Research
+- https://reverbmachine.com/blog/deconstructing-brian-eno-music-for-airports/ (Brian Eno techniques)
+- https://www.audiocube.app/blog/how-to-write-ambient-music (ambient composition)
+- https://blog.landr.com/how-to-make-ambient-music/ (ambient production techniques)
+- https://blog.landr.com/soundscapes/ (soundscape creation)
+- https://www.pointblankmusicschool.com/blog/how-to-create-rich-layered-textures-in-ambient-music/ (layering)
+
 ### Genre Production Knowledge
 - EDM production principles (trance, dubstep, buildups, drops)
 - Synthesis techniques (supersaw, wobble bass, FM)
 - Mixing strategies (sidechain, filter automation)
 - Transition techniques (risers, fills, sweeps, impacts)
+- Ambient techniques (phase looping, generative systems, Perlin modulation)
+- Brian Eno's generative music philosophy
 
 ---
 
 ## Research Statistics
 
-- **Pages Scraped**: 18+ comprehensive documentation pages
+- **Pages Scraped**: 24+ comprehensive documentation pages
 - **Functions Documented**: 170+ core functions and effects
 - **Patterns Catalogued**: 60+ musical patterns across genres
 - **Vocabulary Terms**: 200+ musical intent → code mappings
-- **Code Examples**: 500+ working examples
+- **Code Examples**: 550+ working examples
 - **Drum Machines**: 9 classic drum machine banks
 - **Synthesis Types**: 6 synthesis methods (waveforms, FM, additive, wavetable, ZZFX, noise)
 - **Visualizers**: 7 visualization functions documented
@@ -533,12 +575,13 @@ The agent can:
 - **Glitch Effects**: 10 core glitch techniques with genre examples
 - **Mixing/Mastering**: Complete workflow with 15+ techniques
 - **Song Structure Functions**: stack(), cat(), arrange() fully documented
-- **Community Examples**: 7+ verified songs from GitHub
+- **Community Examples**: 10+ verified songs from GitHub
 - **Synthesis Techniques**: 20+ sound design examples (bass, pads, leads, percussion, experimental)
-- **Genre Guides**: 2 comprehensive production guides (trance, dubstep)
-- **Genre Examples**: 8+ complete track examples across trance and dubstep subgenres
+- **Genre Guides**: 3 comprehensive production guides (trance, dubstep, ambient)
+- **Genre Examples**: 13+ complete track examples across genres
 - **Transition Techniques**: 9 core transition types with 50+ examples
-- **Transition Examples**: 4 complete working transitions with full code
+- **Ambient Techniques**: Phase looping, Perlin modulation, generative systems, modal harmony
+- **Ambient Examples**: 5 complete ambient compositions + 8 subgenre examples
 
 ---
 
@@ -562,5 +605,6 @@ The agent can:
 | 14_trance_production_guide.md | ✅ Complete | 2025-12-23 | Genre-specific production guide |
 | 15_dubstep_production_guide.md | ✅ Complete | 2025-12-23 | Genre-specific production guide |
 | 16_transitions_and_arrangement_guide.md | ✅ Complete | 2025-12-23 | Comprehensive transition techniques |
+| 17_ambient_music_production_guide.md | ✅ Complete | 2025-12-25 | Brian Eno techniques, generative systems, complete examples |
 
 **All research files are complete and verified against official documentation or established production techniques.**

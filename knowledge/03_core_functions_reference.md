@@ -318,7 +318,12 @@ Defines rhythm structure for a pattern.
 **Parameters**: `structure` (string|Pattern)
 
 **Examples**:
+
+A more complex example structuring multiple instruments
+
 ```javascript
+setcpm(130/2)
+
 // Drum Roll BD as a Structure
 $: s("bd:1")
   .lpf("<800 600 400 200>").slow(2) // Slow lowpass filter
@@ -330,8 +335,16 @@ $: s("sd:1")
   .struct("<[x*<1 2> [~@3 x]] x>") // Bar Level Structure
   .gain(0.1) // Overall Volume
 
-// Main Snare
+// Double High Hats
+$: s("hh:9").clip(.12)
+  .struct("~ x*2").fast(1) // Double tap structure
+  .hpf(1900)  // High pass for clean highs
+  .gain(1.2)  // Pop it for clarity on larger 
 
+// Main Clap
+$: s("cp")
+  .struct("~ ~ x ~").slow(2).swing(.2) // Structure over 2 bars with a breakbeat feel
+  .gain(0.6)
 
 // Sine Minor Progression with Structure
 $: n("<0 2 4 [5,9]>").scale("E2:minor") // Bar Level Melody
@@ -339,6 +352,15 @@ $: n("<0 2 4 [5,9]>").scale("E2:minor") // Bar Level Melody
   .fm(2).phaser(4)          // Effects
   .struct("~ x x x")        // Bar Level Stucture
   .gain("<.5 .65 .72 .8>")  // Macro Volume Levels
+
+// Wandering square with effects
+$: n("<5 4 5 4 5 4 5 9>").fast(2).scale("E4:minor")
+  .attack(0.04).decay(3)                     // Shape
+  .s("triangle").fm(2).orbit(2)              // Formant
+  .hpf(1800)                                 // High pass
+  .room(.8).size(4)                          // Reverb
+  .struct("<<~ x*<1 <1 2>>> x*2>").fast(2)   // Nested multi-bar structure over note sequence
+  .gain(0.05) // Instrument volume
 ```
 
 ### mask()

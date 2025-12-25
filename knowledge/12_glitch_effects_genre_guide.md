@@ -87,7 +87,7 @@ $: s("bd sd [~ bd] sd,hh*8").distort("<0 2 3 10:.5>")
 
 **Synth Distortion Example**:
 ```javascript
-$: note("d1!8").s("sine")
+$: note("d1!8")
   .penv(36).pdecay(.12)
   .decay(.23)
   .distort("8:.4")
