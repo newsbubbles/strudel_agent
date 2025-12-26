@@ -1,209 +1,314 @@
-# Strudel Music Assistant
+# Strudel Agent
 
-An AI agent for creating and organizing Strudel live coding music projects.
+AI-powered music creation system for Strudel live coding. Create, organize, and perform with intelligent code generation and project management.
 
-## Overview
+## What is this?
 
-Strudel Music Assistant helps you:
-- Create reusable Strudel code snippets (clips)
-- Organize clips into complete songs
-- Build playlists for performances
-- Search Strudel knowledge base
-- Manage multiple music projects
+Strudel Agent is an MCP (Model Context Protocol) server that gives AI assistants the ability to work with Strudel live coding projects. Think of it as giving Claude or any MCP-compatible AI the power to write Strudel code, manage music projects, search sample packs, and help you create music faster.
+
+The system includes:
+- **MCP Server** - 29 tools for Strudel project management
+- **LiveStrudler Agent** - Real-time code generator optimized for live performance
+- **Knowledge Base** - Curated Strudel reference documentation
+- **Sample Pack Database** - Searchable catalog of known sample packs
+- **Surface Templates** - Parameterized code generation with validation
 
 ## Quick Start
 
-### 1. Install Dependencies
+### Installation
 
 ```bash
+git clone https://github.com/yourusername/strudel_agent.git
+cd strudel_agent
 pip install -r requirements.txt
 ```
 
-### 2. Configure Environment
+### Using with Claude Desktop
 
-Copy `.env.example` to `.env` and add your API keys:
+Add this to your Claude Desktop config file:
 
-```bash
-cp .env.example .env
+**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`  
+**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "strudel": {
+      "command": "python",
+      "args": [
+        "/absolute/path/to/strudel_agent/mcp_server.py"
+      ]
+    }
+  }
+}
 ```
 
-Edit `.env` and add:
-- `OPENROUTER_API_KEY` - Your OpenRouter API key
-- `LOGFIRE_API_KEY` - Your Logfire API key (optional)
+Restart Claude Desktop and you're ready to go.
 
-### 3. Run the Agent
+## What Can It Do?
 
-```bash
-python agent.py
-```
+The MCP server provides 29 tools organized into these categories:
 
-Optionally specify a different model:
+### Knowledge & Discovery (5 tools)
+- Search Strudel documentation
+- List available knowledge docs
+- Read full documentation files
+- Search sample packs by genre/type
+- Get detailed pack information
 
-```bash
-python agent.py --model anthropic/claude-3.7-sonnet
-```
+### Project Management (2 tools)
+- List all projects
+- Create/update project index files
+
+### Clips (5 tools)
+- List clips with metadata filtering
+- Search clip code with regex
+- Get full clip content
+- Save new clips with versioned metadata
+- Update existing clips (auto-bumps version)
+
+### Songs (4 tools)
+- List songs in a project
+- Get full song content
+- Create new songs with structure
+- Update existing songs
+
+### Playlists (4 tools)
+- List playlists
+- Get playlist content
+- Create new playlists
+- Update playlists
+
+### Surface Templates (5 tools)
+- Create parameterized code templates
+- List templates by category/tags
+- Get template schema
+- Generate code from templates with validation
+- Update existing templates
+
+### Sample Packs (2 tools)
+- Search known packs database
+- Get detailed pack documentation
 
 ## Project Structure
 
 ```
 strudel_agent/
-├── projects/                    # Your music projects
+├── projects/                   # Your music projects
 │   └── {project_name}/
-│       ├── index.md            # Project description
-│       ├── clips/              # Reusable code snippets
-│       │   └── {clip_id}.js
-│       ├── songs/              # Complete compositions
-│       │   └── {song_id}.md
-│       └── playlists/          # Performance sets
-│           └── {playlist_id}.md
+│       ├── index.md           # Project info
+│       ├── clips/             # Reusable code snippets (.js)
+│       ├── songs/             # Complete compositions (.md)
+│       ├── playlists/         # Performance sets (.md)
+│       └── surfaces/          # Code templates (.yaml)
 │
-├── knowledge/                   # Strudel reference docs
-│   ├── notation.md
-│   ├── core_functions.md
+├── knowledge/                  # Strudel reference docs
+│   ├── patterns.md
+│   ├── effects.md
 │   └── ...
 │
-├── agents/                      # Agent system prompts
-│   └── StrudelMusicAssistant.md
+├── known_packs/               # Sample pack database
+│   ├── dirt_samples.md
+│   ├── garden.md
+│   └── ...
 │
-├── mcp_server.py                # MCP server implementation
-├── agent.py                     # CLI agent for testing
-├── requirements.txt
-└── .env.example
+├── agents/                    # Agent system prompts
+│   ├── LiveStrudler.md       # Real-time code generator
+│   ├── StrudelMusicAssistant.md
+│   └── StrudelCoder.md
+│
+├── mcp_server.py             # MCP server implementation
+├── agent.py                  # CLI test agent
+└── requirements.txt
 ```
 
-## Usage Examples
+## Key Features
 
-### Creating a New Project
+### Clip Versioning
 
-```
-> I want to start a new house music project called "sunset_vibes"
-```
-
-The agent will create the project structure and help you build clips.
-
-### Creating Clips
-
-```
-> Create a four-on-floor kick pattern for house music
-```
-
-The agent will generate Strudel code and save it as a clip.
-
-### Building a Song
-
-```
-> Let's create a song using the kick, bass, and chord clips we made
-```
-
-The agent will help structure the song and save it as a markdown file.
-
-### Searching Knowledge
-
-```
-> How do I add swing to a drum pattern?
-```
-
-The agent will search the knowledge base and explain the technique.
-
-## File Formats
-
-### Clip Files (`.js`)
-
-First line contains JSON metadata as a comment:
+Clips use semantic versioning and track metadata in the first line:
 
 ```javascript
-// {"name": "House Kick", "tags": ["drums", "kick", "house"], "tempo": 120, "description": "Four-on-floor kick pattern"}
-sound("bd*4").bank("RolandTR909").gain(0.8)
+// {"name": "Techno Kick", "tags": ["drums", "kick", "techno"], "tempo": 128, "description": "Four-on-floor with sidechain", "author": "you", "version": "1.2.0", "date": "2025-12-26"}
+$: sound("bd*4").gain(0.9)
 ```
 
-### Song Files (`.md`)
+Updating a clip automatically bumps the version and updates the date.
 
-Markdown with H1 title, description, and structure:
+### Surface Templates
 
-```markdown
-# Sunset House Groove
+Create reusable, parameterized patterns with schema validation:
 
-Warm, groovy house track with filtered bass and jazzy chords.
+```yaml
+metadata:
+  name: "Techno Kick Pattern"
+  category: "drums"
+  tags: ["kick", "techno"]
 
-## Structure
+template: |
+  $: sound("bd*{pattern}").gain({gain}).lpf({cutoff})
 
-### Intro (0-16 bars)
-- Start with [kick.js](../clips/kick.js)
-- Add [hats.js](../clips/hats.js) at bar 8
+schema:
+  pattern:
+    type: integer
+    default: 4
+    min: 1
+    max: 16
+  gain:
+    type: float
+    default: 0.8
+    min: 0.0
+    max: 1.0
+  cutoff:
+    type: integer
+    default: 800
+    min: 100
+    max: 20000
 ```
 
-### Playlist Files (`.md`)
+Generate validated code:
 
-Markdown with ordered song list:
-
-```markdown
-# Friday Night Set
-
-## Tracklist
-
-1. [Sunset House Groove](../songs/sunset_house_groove.md)
-   - Transition: Fade out drums over 8 bars
+```javascript
+// generate_from_template with {pattern: 8, gain: 0.9, cutoff: 600}
+$: sound("bd*8").gain(0.9).lpf(600)
 ```
 
-## Available Tools
+### Sample Pack Discovery
 
-The agent has access to 16 tools:
+Searchable database of known sample packs with usage examples, licenses, and tags. Search by genre, instrument type, or characteristics.
 
-**Knowledge**:
-- `search_knowledge` - Search Strudel reference docs
+## LiveStrudler Agent
 
-**Projects**:
-- `list_projects` - List all projects
-- `write_project_index` - Create/update project description
+The included LiveStrudler agent is optimized for real-time code generation:
 
-**Clips**:
-- `list_clips` - List clips in project
-- `search_clips` - Search clip code
-- `get_clips` - Get full clip content
-- `save_new_clip` - Create new clip
-- `update_clip` - Update existing clip
+- **Code-first output** - No explanations, just working JavaScript
+- **Knowledge integration** - Automatically searches docs before coding
+- **Musical translation** - Converts intent ("make it darker") to parameters
+- **Live performance focus** - Fast iteration, minimal friction
+- **Canvas awareness** - Builds on previous output
 
-**Songs**:
-- `list_songs` - List songs
-- `get_songs` - Get full song content
-- `save_new_song` - Create new song
-- `update_song` - Update existing song
+Perfect for live coding sessions where speed matters.
 
-**Playlists**:
-- `list_playlists` - List playlists
-- `get_playlists` - Get full playlist content
-- `save_new_playlist` - Create new playlist
-- `update_playlist` - Update existing playlist
+## Roadmap
 
-## Development
+The project is actively developing these features:
 
-### Testing the MCP Server
+1. **Sample Discovery** - Intelligent sample search and recommendations
+2. **Song Structuring** - Better arrangement and composition tools
+3. **Streaming MIDI** - Real-time MIDI output capture
+4. **MCP Toolset Review** - Full backend audit and testing
+5. **Frontend Testing** - Comprehensive UI test suite
+6. **Error Mitigation** - Autonomous debug loop for runtime errors
+7. **Output Awareness** - Real-time audio/MIDI analysis for mixing and mastering
 
-Run the server directly:
+See `notes/roadmap.md` for detailed plans.
+
+## Web UI (Coming Soon)
+
+A full web interface with Strudel integration is in development. It will include:
+- Real-time code editing with agent assistance
+- Error feedback loops with autonomous debugging
+- MIDI and audio output analysis
+- Project browser and clip management
+- Live performance mode
+
+Stay tuned.
+
+## Contributing
+
+Contributions are welcome, especially in these areas:
+
+### Knowledge Base
+
+The `knowledge/` folder needs more high-quality Strudel documentation. If you know Strudel well, please contribute:
+- Pattern techniques
+- Effect usage examples
+- Musical concepts and translations
+- Common workflows
+- Tips and tricks
+
+The better the knowledge base, the better the agent performs.
+
+### Sample Pack Database
+
+Add entries to `known_packs/` for sample packs you use:
+- Pack name and GitHub URL
+- Sound categories available
+- Usage examples
+- License information
+- Tags for searchability
+
+Help build a comprehensive catalog.
+
+### Example Projects
+
+Create example projects in `projects/` that showcase:
+- Different genres and styles
+- Advanced techniques
+- Template usage patterns
+- Song structuring approaches
+
+Finished examples help the agent learn better patterns.
+
+## Testing
+
+### MCP Server
+
+Test the server directly:
 
 ```bash
 python mcp_server.py
 ```
 
-### Project Status
+### CLI Agent
 
-This is an MVP (Minimum Viable Product) implementation focusing on:
-- Filesystem-based storage (no database)
-- Regex-based search (no embeddings)
-- Simple CRUD operations
-- CLI agent for testing
+Run the test agent:
 
-**Planned enhancements**:
-- PostgreSQL database for better querying
-- pgvector embeddings for semantic search
-- JavaScript syntax validation
-- Async operations
-- Web interface
+```bash
+python agent.py
+```
+
+Optionally specify a model:
+
+```bash
+python agent.py --model anthropic/claude-3.7-sonnet
+```
+
+## Technical Details
+
+### Storage
+
+Filesystem-based (no database required):
+- Projects stored in `projects/`
+- Clips are `.js` files with JSON metadata
+- Songs and playlists are markdown
+- Templates are YAML
+
+### Search
+
+Regex-based search across:
+- Clip metadata and code
+- Song and playlist content
+- Knowledge documentation
+- Sample pack information
+
+No embeddings or vector search (yet).
+
+### Validation
+
+Surface templates include schema validation:
+- Type checking (string, integer, float, boolean, array)
+- Range constraints (min, max)
+- Enum options
+- Pattern matching (regex)
+- Array constraints (min/max items, item types)
+
+## Thanks
+
+Thanks to the Strudel community for building an amazing live coding environment. This project wouldn't exist without your work.
+
+Special thanks to contributors who help improve the knowledge base and sample pack database. The more complete these resources are, the more useful the agent becomes.
 
 ## License
 
 MIT
-
-## Contributing
-
-Contributions welcome! Please open an issue or PR.
