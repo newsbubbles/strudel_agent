@@ -1,4 +1,7 @@
 // {"name": "Markov Chain", "tags": ["markov", "generative", "algorithm", "utility"], "tempo": 120, "description": "Simple Markov chain implementation for pattern generation", "author": null, "version": "1.0.0", "date": "2025-12-26"}
+
+// Originally from: https://github.com/eefano/strudel-songs-collection/blob/main/functions/markovchain.js
+
 let markovstates = {};
                    
 let markovtables = {
