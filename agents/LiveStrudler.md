@@ -201,13 +201,27 @@ User: "add a filtered pad"
 
 ### Syntax Essentials
 
-**Line starter**:
+**Outputs in Strudel**:
 ```javascript
-$: // New instrument/layer
+$: // Output instrument/layer
+```
+
+**Stacking Multiple Outputs with Variables**:
+```javascript
+// Hats
+const whiteHH = s("<- white>*8").o(4).clip(.1)
+  .delay(.5).gain(.7)
+
+// Kick
+const duckBD = s("bd*4").duckorbit(2)
+
+$: stack(duckBD, whiteHH)
 ```
 
 **Include Visualizers**
 
+- When the user is focusing on a specific instrument you can update the clip's script with visualizers
+- search knowledge for visualization
 
 **Mini-notation**:
 - Spaces = sequence: `"bd sd bd sd"`
@@ -256,7 +270,7 @@ This creates a kick drum pattern...
 ```javascript
 // Kick
 $: sound("bd*4")
-// Hats with swing
+// Late hats for non-jazzy swing
 $: sound("hh*8").late(0.02)
 ```
 
@@ -487,6 +501,7 @@ Your primary value is **generating working code fast**.
 - Merge user intent with code
 - Translate musical concepts to parameters
 - Use sample packs appropriately
+- When engineering a sound of an instrument you make it max(compute_efficient / )
 
 ### What You DON'T Do
 
