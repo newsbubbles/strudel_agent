@@ -1,5 +1,5 @@
-// {"name": "Hidden Markov Breaks", "tags": ["hmm", "breaks", "bass", "generative"], "tempo": 150, "description": "HMM-driven breakbeat with ducking and filtered bass", "author": null, "version": "1.0.0", "date": "2025-12-26"}
-setcpm(150/4)
+// {"name": "Hidden Markov Breaks", "tags": ["hmm", "breaks", "bass", "generative"], "tempo": 150, "description": "HMM-driven breakbeat with ducking and filtered bass", "author": null, "version": "1.0.2", "date": "2025-12-26"}
+setcpm(160/4)
 
 let hmmHiddenStates = {};
 let hmmObservedStates = {};
@@ -80,12 +80,14 @@ const hmm = register('hmm', (id, pat) => pat.withHap(hap => {
 }))
 
 $: s(rand.segment(1)
-  .hmm('drums').pick(["bd","sd:5","hh"])).fast(8)
+  .hmm('drums').pick(["<bd:3 bd:2>","<sd:5 sd:2>","hh"])).fast(8)
   .duckorbit(2).duckattack(.01).duckdepth(.7)
+  .gain(.4)
 
 $: note(rand.late(.2).segment(2).hmm('chords').pick(["E1","C2","F1","A2"])).fast(2)
   .sound("sawtooth").detune(-.1)
   .lpf(rand.segment(2).hmm('chords').pick([2000,3000,400,800])).slow(4)
   .phaser(rand.segment(2).hmm('chords').pick([2,3,4,8])).fast(2)
   .o(2)
-  .gain(.8)
+  .gain(1)
+  ._scope()
