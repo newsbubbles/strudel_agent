@@ -1,11 +1,40 @@
-// {"name": "Markov Scratchpad", "tags": ["markov", "generative", "experimental", "drums", "chords"], "tempo": 120, "description": "Markov chain experiment with drums and chords - needs debugging", "author": null, "version": "1.0.1", "date": "2025-12-26"}
+// {"name": "Markov Scratchpad", "tags": ["markov", "generative", "experimental", "drums", "chords"], "tempo": 120, "description": "Markov chain experiment with drums and chords - needs debugging", "author": null, "version": "1.1.0", "date": "2025-12-26"}
 let markovstates = {};
 
 let hmmHiddenStates = {};
 let hmmObservedStates = {};
-let hiddenTransitions = {};
-let hmmTables = {};
-let hiddenIndex = [];
+let hiddenTransitions = {
+  'drums': {
+    'groove': [0.7, 0.3],
+    'fill': [0.4, 0.6]
+  },
+  'chords': {
+    'stable': [0.8, 0.2],
+    'transition': [0.3, 0.7]
+  }
+};
+let hmmTables = {
+  'drums': {
+    'groove': [
+      [[0, .2, .8], [.3, 0, .7], [.9, .1, 0]]
+    ],
+    'fill': [
+      [[.1, .4, .5], [.4, .2, .4], [.5, .3, .2]]
+    ]
+  },
+  'chords': {
+    'stable': [
+      [[.2, .2, .4, .2], [.5, .3, .2, .1], [0, .2, .7, .1], [.7, .1, .1, .1]]
+    ],
+    'transition': [
+      [[.1, .3, .3, .3], [.3, .2, .3, .2], [.2, .2, .4, .2], [.3, .3, .2, .2]]
+    ]
+  }
+};
+let hiddenIndex = {
+  'drums': ['groove', 'fill'],
+  'chords': ['stable', 'transition']
+};
                    
 let markovtables = {
   'drums':
@@ -23,7 +52,7 @@ let markovtables = {
 
 const hmm = register('hmm', (id, pat) => pat.withHap(hap => {
 
-  if (!hmmHiddenStates[id]) hmmHiddenStates[id] = ['groove']
+  if (!hmmHiddenStates[id]) hmmHiddenStates[id] = [hiddenIndex[id][0]]
   if (!hmmObservedStates[id]) hmmObservedStates[id] = [0]
 
   const p = hap.whole.begin.n
@@ -39,7 +68,7 @@ const hmm = register('hmm', (id, pat) => pat.withHap(hap => {
     for (let i = 0; i < ht.length; i++) {
       acc += ht[i]
       if (Math.random() < acc) {
-        nextHidden = hiddenIndex[i]
+        nextHidden = hiddenIndex[id][i]
         break
       }
     }
@@ -48,7 +77,7 @@ const hmm = register('hmm', (id, pat) => pat.withHap(hap => {
 
     // --- observable step ---
     const prevObs = hmmObservedStates[id].at(-1)
-    const table = hmmTables[id][nextHidden][prevObs]
+    const table = hmmTables[id][nextHidden][0][prevObs]
     let nextObs = prevObs
     acc = 0
 
@@ -85,6 +114,6 @@ const markov = register('markov', (id, pat) => pat.withHap((hap)=> {
      return hap.withValue((v)=>mystate[p]);
 }))
 
-$: s(rand.segment(1).markov('drums').pick(["bd","sd","hh"])).fast(8)
+$: s(rand.segment(1).hmm('drums').pick(["bd","sd","hh"])).fast(8)
 
-$: chord(rand.late(.2).segment(1).markov('chords').pick(["C","Dm","F","A"])).fast(2).voicing().piano()
+$: chord(rand.late(.2).segment(1).hmm('chords').pick(["C","Dm","F","A"])).fast(2).voicing().piano()
