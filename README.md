@@ -1,5 +1,7 @@
 # Strudel Agent
 
+![strudelmon](https://github.com/user-attachments/assets/043a452d-cad4-4d33-bbbb-5962cddbe698)
+
 AI-powered music creation system for Strudel live coding. Create, organize, and perform with intelligent code generation and project management.
 
 ## What is this?
