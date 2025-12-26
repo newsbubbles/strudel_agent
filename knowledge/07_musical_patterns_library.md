@@ -416,7 +416,6 @@ $: note("<[c2,e2,g2] [d2,f2,a2] [e2,g2,b2] [f2,a2,c3]>")
    .gain(.3)
 
 $: note("<c4 d4 e4 f4>")
-   .s("sine")
    .delay(.5)
    .room(.8)
    .gain(.2)
