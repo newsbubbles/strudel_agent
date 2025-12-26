@@ -27,10 +27,11 @@ const padLayer = n(epicLead).s("sawtooth").scale(scala)
 const shimmerPad = padLayer.struct("<~ x*2>*4").shimmer(8)
 
 const driveBD = s("bd:1!4").lpf(sine.range(500, 1800).slow(orbit))
+  .gain(.6)
   .duckorbit(3).duckattack(.08).duckdepth(.7)
 
 const driveBDSweep = driveBD.hpf("<1200 900 600 400 200 100 50 0>!4").duckorbit("<4 4 4 3>!16")
-const driveBDClean = driveBD.hpf(1600).gain(.85).duckorbit(4)
+const driveBDClean = driveBD.hpf(1600).gain(.75).duckorbit(4)
 
 const metallicHH = s("<- cp:2>*8").o(3).clip(.08)
   .delay(.4).gain(.65).hpf(2000)
@@ -44,7 +45,7 @@ const pat = {
   opening: supersawLead,
   charge: stack(supersawLead, driveBDSweep),
   breath: stack(padLayer, noiseRise, driveBDClean),
-  rush: stack(supersawLead, driveBD, metallicHH, shimmerPad),
+  rush: stack(supersawLead, driveBD.gain(.55), metallicHH, shimmerPad),
   release: stack(supersawLead, driveBDClean)
 }
 

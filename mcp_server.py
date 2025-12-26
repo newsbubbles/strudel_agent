@@ -15,6 +15,7 @@ from typing import Any, List
 from typing import Optional, Literal
 from pydantic import BaseModel, Field
 from mcp.server.fastmcp import FastMCP
+from datetime import date as date_module
 
 # Initialize FastMCP server
 mcp = FastMCP("Strudel Music Assistant")
@@ -48,6 +49,17 @@ class ClipMetadata(BaseModel):
     description: str = Field(
         description="What this clip does musically - describe the sound, pattern, or musical function"
     )
+    author: Optional[str] = Field(
+        default=None,
+        description="Clip author name"
+    )
+    version: str = Field(
+        default="1.0.0",
+        description="Semantic version of the clip (e.g., 1.0.0)"
+    )
+    date: str = Field(
+        description="Creation/modification date in ISO format (YYYY-MM-DD)"
+    )
 
 
 class SearchMatch(BaseModel):
@@ -64,6 +76,9 @@ class ClipInfo(BaseModel):
     tags: list[str] = Field(description="Tags associated with the clip")
     tempo: Optional[int] = Field(description="BPM if specified")
     description: str = Field(description="Musical description of the clip")
+    author: Optional[str] = Field(description="Clip author")
+    version: str = Field(description="Clip version")
+    date: str = Field(description="Clip creation/modification date")
 
 
 class SongInfo(BaseModel):
@@ -166,7 +181,7 @@ class SaveNewClipRequest(BaseModel):
         description="Unique identifier for the clip (will be used as filename without extension). Use lowercase with underscores."
     )
     metadata: dict = Field(
-        description="Clip metadata dictionary with keys: 'name' (str), 'tags' (list[str]), 'tempo' (int, optional), 'description' (str)"
+        description="Clip metadata dictionary with keys: 'name' (str), 'tags' (list[str]), 'tempo' (int, optional), 'description' (str), 'author' (str, optional), 'version' (str, optional, defaults to '1.0.0'), 'date' (str, optional, auto-populated with current date in YYYY-MM-DD format)"
     )
     strudel_script: str = Field(
         description="JavaScript Strudel code for the clip (without the metadata comment line)"
@@ -183,11 +198,15 @@ class UpdateClipRequest(BaseModel):
     )
     metadata: Optional[dict] = Field(
         default=None,
-        description="Optional new metadata. If None, keeps existing metadata."
+        description="Optional new metadata. If None, keeps existing metadata. Can include 'name', 'tags', 'tempo', 'description', 'author', 'version', 'date'."
     )
     strudel_script: Optional[str] = Field(
         default=None,
         description="Optional new Strudel code. If None, keeps existing code."
+    )
+    bump_version: Optional[Literal["major", "minor", "patch"]] = Field(
+        default="patch",
+        description="Which version component to bump (major, minor, or patch). Defaults to patch. The version will be automatically incremented and date will be updated to current date."
     )
 
 
@@ -415,6 +434,34 @@ class UpdateTemplateRequest(BaseModel):
 # Utility Functions
 # ============================================================================
 
+def bump_semantic_version(current_version: str, bump_type: str) -> str:
+    """Bump semantic version string
+    
+    Args:
+        current_version: Version string like "1.2.3"
+        bump_type: One of "major", "minor", "patch"
+    
+    Returns:
+        New version string
+    """
+    try:
+        parts = [int(x) for x in current_version.split('.')]
+        if len(parts) != 3:
+            # Invalid version format, reset to 1.0.0
+            return "1.0.0"
+        
+        major, minor, patch = parts
+        
+        if bump_type == "major":
+            return f"{major + 1}.0.0"
+        elif bump_type == "minor":
+            return f"{major}.{minor + 1}.0"
+        else:  # patch
+            return f"{major}.{minor}.{patch + 1}"
+    except Exception:
+        return "1.0.0"
+
+
 def regex_search_file(file_path: Path, pattern: str, context_lines: int = 2) -> list[SearchMatch]:
     """Search a file for regex pattern and return matches with context"""
     if not file_path.exists():
@@ -452,6 +499,18 @@ def parse_clip_metadata(file_path: Path) -> Optional[ClipMetadata]:
         json_match = re.search(r'//\s*({.+})', first_line)
         if json_match:
             metadata_dict = json.loads(json_match.group(1))
+            
+            # Backward compatibility: fill in missing fields
+            if 'author' not in metadata_dict:
+                metadata_dict['author'] = None
+            if 'version' not in metadata_dict:
+                metadata_dict['version'] = "1.0.0"
+            if 'date' not in metadata_dict:
+                # Use file modification time as fallback
+                from datetime import datetime
+                mtime = file_path.stat().st_mtime
+                metadata_dict['date'] = datetime.fromtimestamp(mtime).strftime('%Y-%m-%d')
+            
             return ClipMetadata(**metadata_dict)
     except Exception:
         pass
@@ -874,7 +933,10 @@ def list_clips(request: ListClipsRequest) -> dict:
             name=metadata.name,
             tags=metadata.tags,
             tempo=metadata.tempo,
-            description=metadata.description
+            description=metadata.description,
+            author=metadata.author,
+            version=metadata.version,
+            date=metadata.date
         ).model_dump())
     
     return {"clips": clips, "total": len(clips), "project_id": request.project_id}
@@ -972,6 +1034,16 @@ def save_new_clip(request: SaveNewClipRequest) -> dict:
             "success": False
         }
     
+    # Auto-populate date if not provided
+    if 'date' not in request.metadata:
+        request.metadata['date'] = date_module.today().strftime('%Y-%m-%d')
+    
+    # Ensure defaults for optional fields
+    if 'author' not in request.metadata:
+        request.metadata['author'] = None
+    if 'version' not in request.metadata:
+        request.metadata['version'] = "1.0.0"
+    
     # Validate metadata
     try:
         clip_metadata = ClipMetadata(**request.metadata)
@@ -1021,7 +1093,16 @@ def update_clip(request: UpdateClipRequest) -> dict:
         except Exception as e:
             return {"error": f"Invalid metadata: {str(e)}", "success": False}
     else:
+        # Keep existing metadata but will bump version and update date
         new_metadata = existing_metadata
+    
+    # Bump version if requested
+    if request.bump_version:
+        current_version = new_metadata.version
+        new_metadata.version = bump_semantic_version(current_version, request.bump_version)
+    
+    # Update date to current date
+    new_metadata.date = date_module.today().strftime('%Y-%m-%d')
     
     new_code = request.strudel_script if request.strudel_script is not None else existing_code
     
@@ -1034,7 +1115,8 @@ def update_clip(request: UpdateClipRequest) -> dict:
         "success": True,
         "project_id": request.project_id,
         "clip_id": request.clip_id,
-        "message": f"Clip '{request.clip_id}' updated successfully"
+        "version": new_metadata.version,
+        "message": f"Clip '{request.clip_id}' updated successfully to version {new_metadata.version}"
     }
 
 

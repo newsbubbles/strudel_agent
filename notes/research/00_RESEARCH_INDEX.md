@@ -262,6 +262,23 @@ This folder contains comprehensive research on Strudel live coding for music, ga
 - **Brian Eno techniques**: Incommensurable loops, phase relationships, system-based composition
 - **Quick reference**: Essential functions, chord progressions, scales
 
+### 18_interactive_and_algorithmic_functions.md
+**Purpose**: Advanced custom functions for interactive control and algorithmic composition  
+**Status**: ✅ Complete (Added 2025-12-25)  
+**Content**:
+- **Interactive control**: Keyboard trigger (Ctrl+1-9 toggle muting), MIDI note trigger (hardware controller integration), tempo control with arrow keys
+- **Algorithmic composition**: Markov chain generator (probabilistic sequences), ascending pattern generator (mathematical melodies)
+- **Musical utilities**: Manual chords (custom voicings and inversions), add degree (scale degree transposition), rebaser (Roman numeral notation)
+- **Audio processing**: Ten-band EQ with visual feedback and interactive sliders
+- **register() API**: Creating custom pattern functions with `.withValue()` and `.withHap()`
+- **Event listeners**: Keyboard and MIDI input handling for live performance
+- **State management**: Persistent state across cycles for interactive control
+- **Complete implementations**: 9 fully documented community functions with use cases
+- **Live performance examples**: Combining keyboard control, tempo adjustment, and Markov chains
+- **EQ mixing tips**: Genre-specific EQ templates (techno, ambient) and frequency band reference
+- **Troubleshooting**: Browser compatibility, MIDI device detection, debugging tips
+- **Further exploration**: Ideas for custom functions (velocity sensitivity, CC control, gesture recording)
+
 ---
 
 ## Key Findings for Agent Development
@@ -396,15 +413,24 @@ Ambient music requires a different approach:
 - **Perlin modulation**: Smooth, organic parameter evolution
 - **Modal harmony**: Dorian, Mixolydian, Lydian for ambiguous tonality
 
+### 17. Extensibility Through register()
+Strudel can be extended with custom functions:
+- **Interactive control**: Keyboard/MIDI input for live performance
+- **Algorithmic composition**: Markov chains, mathematical transformations
+- **Custom utilities**: Chord systems, scale degree manipulation
+- **Audio processing**: Multi-band EQ, custom effects chains
+- **State management**: Persistent state across cycles
+- **Event handling**: Browser APIs for hardware integration
+
 ---
 
 ## Agent Design Implications
 
 ### For Understanding User Intent
 The agent needs to:
-1. **Recognize musical terminology** ("groovy", "bright", "punchy", "glitchy", "loud", "polished", "atmospheric", "droning", etc.)
+1. **Recognize musical terminology** ("groovy", "bright", "punchy", "glitchy", "loud", "polished", "atmospheric", "droning", "interactive", etc.)
 2. **Map to Strudel code** using vocabulary glossary
-3. **Understand context** (genre, mood, energy level)
+3. **Understand context** (genre, mood, energy level, performance vs composition)
 4. **Ask clarifying questions** when intent is ambiguous
 5. **Recognize glitch/experimental requests** and apply appropriate effects
 6. **Understand mixing requests** ("make it louder", "add space", "tighten the kick")
@@ -412,6 +438,7 @@ The agent needs to:
 8. **Recognize genre-specific requests** ("trance lead", "dubstep wobble", "supersaw", "ambient drone")
 9. **Recognize transition requests** ("add a buildup", "smooth transition", "drop")
 10. **Recognize ambient requests** ("evolving", "meditative", "spacious", "generative")
+11. **Recognize interactive requests** ("keyboard control", "MIDI input", "live performance")
 
 ### For Code Generation
 The agent should:
@@ -432,6 +459,9 @@ The agent should:
 15. **Apply genre-specific techniques** (supersaw for trance, wobble for dubstep, phase loops for ambient)
 16. **Add professional transitions** between sections (fills, risers, sweeps, impacts)
 17. **Use generative techniques** for ambient (Perlin modulation, incommensurable loops, probabilistic patterns)
+18. **Implement interactive control** when requested (keyboard triggers, MIDI, tempo control)
+19. **Use register() for custom functions** when built-in functions aren't sufficient
+20. **Add algorithmic composition** (Markov chains, mathematical patterns) for generative music
 
 ### For Teaching
 The agent can:
@@ -451,6 +481,9 @@ The agent can:
 14. **Teach genre-specific production** (trance buildups, dubstep bass design, ambient drones)
 15. **Demonstrate transition techniques** (buildups, breakdowns, fills, risers)
 16. **Teach generative techniques** (Brian Eno's phase looping, system-based composition)
+17. **Explain register() API** for creating custom functions
+18. **Guide interactive setup** (keyboard/MIDI configuration, event listeners)
+19. **Demonstrate algorithmic composition** (Markov chains, mathematical patterns)
 
 ---
 
@@ -463,6 +496,8 @@ The agent can:
    - Filters (subtractive synthesis), ADSR, modulation
 3. **Mixing** → `13_mastering_mixing_guide.md`
    - Gain, compression, orbits, ducking, master bus
+4. **Custom Processing** → `18_interactive_and_algorithmic_functions.md`
+   - Ten-band EQ, custom effects chains
 
 ### Musical Structure
 1. **Patterns** → `02_mini_notation_cheatsheet.md`
@@ -470,6 +505,7 @@ The agent can:
 3. **Song Structure** → `09_stack_and_song_structure.md`
 4. **Transitions** → `16_transitions_and_arrangement_guide.md`
 5. **Variation** → `11_conditional_modifiers_reference.md`
+6. **Algorithmic** → `18_interactive_and_algorithmic_functions.md`
 
 ### Sound Sources
 1. **Synthesis** → `06_synths_reference.md`
@@ -491,6 +527,11 @@ The agent can:
 4. **Techno/Jazz/Dub** → `07_musical_patterns_library.md`
 5. **Glitch/IDM/Breakcore** → `12_glitch_effects_genre_guide.md`
 
+### Advanced/Interactive
+1. **Custom Functions** → `18_interactive_and_algorithmic_functions.md`
+2. **Live Performance** → `18_interactive_and_algorithmic_functions.md`
+3. **Generative Music** → `17_ambient_music_production_guide.md` + `18_interactive_and_algorithmic_functions.md`
+
 ---
 
 ## Next Steps
@@ -506,10 +547,11 @@ The agent can:
 9. ✅ Dubstep production guide created
 10. ✅ Transitions and arrangement guide created
 11. ✅ Ambient music production guide created
-12. ⏳ Create `agents/StrudelCoder.md` agent blueprint
-13. ⏳ Design snippet storage system
-14. ⏳ Build MCP server for tool access
-15. ⏳ Test agent with various musical requests
+12. ✅ Interactive and algorithmic functions documented
+13. ⏳ Create `agents/StrudelCoder.md` agent blueprint
+14. ⏳ Design snippet storage system
+15. ⏳ Build MCP server for tool access
+16. ⏳ Test agent with various musical requests
 
 ---
 
@@ -533,7 +575,7 @@ The agent can:
 - https://tidalcycles.org/docs/reference/transitions/ ✅ Verified 2025-12-23 (Tidal transitions)
 
 ### Community Resources
-- https://github.com/eefano/strudel-songs-collection (verified working examples)
+- https://github.com/eefano/strudel-songs-collection ✅ Verified 2025-12-25 (community functions)
 - https://gist.github.com/therebelrobot/fe161e21a8bffc5325891d7ad62ec49b (Strudel learning course)
 - https://strudel.cc/bakery/ (community patterns)
 - https://club.tidalcycles.org/c/strudel/ (Tidal Club forum)
@@ -564,10 +606,10 @@ The agent can:
 ## Research Statistics
 
 - **Pages Scraped**: 24+ comprehensive documentation pages
-- **Functions Documented**: 170+ core functions and effects
+- **Functions Documented**: 180+ core functions and effects (including 9 custom community functions)
 - **Patterns Catalogued**: 60+ musical patterns across genres
 - **Vocabulary Terms**: 200+ musical intent → code mappings
-- **Code Examples**: 550+ working examples
+- **Code Examples**: 600+ working examples
 - **Drum Machines**: 9 classic drum machine banks
 - **Synthesis Types**: 6 synthesis methods (waveforms, FM, additive, wavetable, ZZFX, noise)
 - **Visualizers**: 7 visualization functions documented
@@ -582,6 +624,8 @@ The agent can:
 - **Transition Techniques**: 9 core transition types with 50+ examples
 - **Ambient Techniques**: Phase looping, Perlin modulation, generative systems, modal harmony
 - **Ambient Examples**: 5 complete ambient compositions + 8 subgenre examples
+- **Interactive Functions**: 9 community-created custom functions (keyboard, MIDI, tempo, Markov, EQ, etc.)
+- **Custom Function Types**: Interactive control (3), algorithmic composition (2), musical utilities (3), audio processing (1)
 
 ---
 
@@ -606,5 +650,6 @@ The agent can:
 | 15_dubstep_production_guide.md | ✅ Complete | 2025-12-23 | Genre-specific production guide |
 | 16_transitions_and_arrangement_guide.md | ✅ Complete | 2025-12-23 | Comprehensive transition techniques |
 | 17_ambient_music_production_guide.md | ✅ Complete | 2025-12-25 | Brian Eno techniques, generative systems, complete examples |
+| 18_interactive_and_algorithmic_functions.md | ✅ Complete | 2025-12-25 | Community custom functions, register() API, interactive control |
 
 **All research files are complete and verified against official documentation or established production techniques.**
