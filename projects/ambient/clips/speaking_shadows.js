@@ -1,4 +1,4 @@
-// {"name": "Speaking Shadows", "tags": ["ambient", "chaos", "adventure-time", "glitch", "weird", "melodic", "dissonant", "organic"], "tempo": 75, "description": "Chaotic ambient with wobbling voices that emerge like jump scares then settle into strange speech - beautiful dissonance meets structured harmony", "author": null, "version": "1.0.0", "date": "2025-12-26"}
+// {"name": "Speaking Shadows", "tags": ["ambient", "chaos", "adventure-time", "glitch", "weird", "melodic", "dissonant", "organic"], "tempo": 75, "description": "Chaotic ambient with wobbling voices that emerge like jump scares then settle into strange speech - beautiful dissonance meets structured harmony", "author": "Strudelmon", "version": "1.0.0", "date": "2025-12-27"}
 setcpm(75/4)
 
 samples('github:tidalcycles/dirt-samples')

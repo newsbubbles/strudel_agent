@@ -46,9 +46,9 @@ if ! python -c "import fastapi" 2>/dev/null; then
 fi
 
 echo "Starting server..."
-echo "Server will be available at: http://0.0.0.0:8000"
-echo "WebSocket endpoint: ws://0.0.0.0:8000/ws"
+echo "Server will be available at: http://0.0.0.0:8034"
+echo "WebSocket endpoint: ws://0.0.0.0:8034/ws"
 echo ""
 
 # Run server from backend directory
-python -m uvicorn server:app --reload --host 0.0.0.0 --port 8000
+python -m uvicorn server:app --reload --host 0.0.0.0 --port 8034

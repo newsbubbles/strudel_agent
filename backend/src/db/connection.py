@@ -2,9 +2,16 @@
 
 import os
 import logging
+from pathlib import Path
+from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from sqlmodel import SQLModel
+
+# Load environment variables from backend/.env
+backend_dir = Path(__file__).parent.parent.parent
+env_path = backend_dir / '.env'
+load_dotenv(dotenv_path=env_path)
 
 logger = logging.getLogger(__name__)
 

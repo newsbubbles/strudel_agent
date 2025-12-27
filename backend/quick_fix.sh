@@ -65,7 +65,7 @@ cat > .env << EOF
 STRUDEL_DB_URL=postgresql+asyncpg://$(whoami):password@localhost:5432/strudel_agent
 OPENROUTER_API_KEY=sk-or-v1-your-key-here
 HOST=0.0.0.0
-PORT=8000
+PORT=8034
 EOF
 
 echo "✅ Environment configured!"
@@ -79,5 +79,5 @@ echo "1. Edit .env and add your OpenRouter API key"
 echo "2. Run: ./run_server.sh"
 echo ""
 echo "Database: postgresql://$(whoami):password@localhost:5432/strudel_agent"
-echo "Server will run on: http://0.0.0.0:8000"
+echo "Server will run on: http://0.0.0.0:8034"
 echo ""

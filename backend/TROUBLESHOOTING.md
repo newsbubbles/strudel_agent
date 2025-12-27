@@ -76,7 +76,7 @@ chmod +x run_server.sh
 cd backend
 
 # Run uvicorn
-python -m uvicorn server:app --reload --host 0.0.0.0 --port 8000
+python -m uvicorn server:app --reload --host 0.0.0.0 --port 8034
 ```
 
 **Solution C - Check Dependencies**:
@@ -97,14 +97,11 @@ ERROR: [Errno 98] Address already in use
 **Solution**:
 
 ```bash
-# Find process using port 8000
-lsof -i :8000
+# Find process using port 8034
+lsof -i :8034
 
 # Kill the process
 kill -9 <PID>
-
-# Or use a different port
-python -m uvicorn server:app --reload --host 0.0.0.0 --port 8001
 ```
 
 ---
@@ -232,7 +229,7 @@ psql strudel_agent
 
 ```bash
 # Health check
-curl http://localhost:8000/health
+curl http://localhost:8034/health
 
 # Should return:
 # {"status":"healthy"}
@@ -242,7 +239,7 @@ curl http://localhost:8000/health
 
 ```bash
 # Create a session
-curl -X POST http://localhost:8000/api/sessions \
+curl -X POST http://localhost:8034/api/sessions \
   -H "Content-Type: application/json" \
   -d '{
     "agent_name": "strudel",
@@ -314,7 +311,7 @@ sudo journalctl -u postgresql -f
 
 1. Check all environment variables are set in `.env`
 2. Verify PostgreSQL is running: `sudo systemctl status postgresql`
-3. Check port conflicts: `lsof -i :8000`
+3. Check port conflicts: `lsof -i :8034`
 4. Verify Python version: `python --version` (need 3.11+)
 5. Check logs for specific errors
 

@@ -1,4 +1,4 @@
-// {"name": "Minecraft 1", "tags": ["ambient", "minecraft", "piano", "bells", "arranged", "peaceful"], "tempo": 60, "description": "Minecraft-inspired ambient arrangement with piano, bells, pads and wind texture", "author": null, "version": "1.0.0", "date": "2025-12-26"}
+// {"name": "Minecraft 1", "tags": ["ambient", "minecraft", "piano", "bells", "arranged", "peaceful"], "tempo": 60, "description": "Minecraft-inspired ambient arrangement with piano, bells, pads and wind texture", "author": "Strudelmon", "version": "1.0.0", "date": "2025-12-27"}
 setcpm(60/4)
 
 samples('github:tidalcycles/dirt-samples')

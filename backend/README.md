@@ -55,19 +55,19 @@ OPENROUTER_API_KEY=sk-or-v1-your-key-here
 ### 4. Run Server
 
 ```bash
-python -m uvicorn server:app --reload --host 0.0.0.0 --port 8000
+python -m uvicorn server:app --reload --host 0.0.0.0 --port 8034
 ```
 
-Server running at: `http://localhost:8000`
+Server running at: `http://localhost:8034`
 
 ### 5. Test
 
 ```bash
 # Health check
-curl http://localhost:8000/health
+curl http://localhost:8034/health
 
 # Create session
-curl -X POST http://localhost:8000/api/sessions \
+curl -X POST http://localhost:8034/api/sessions \
   -H "Content-Type: application/json" \
   -d '{
     "agent_name": "strudel",
@@ -127,7 +127,7 @@ See **[notes/interface/integration.md](../notes/interface/integration.md)** for 
 **Songs**: Same pattern as clips
 **Playlists**: Same pattern as clips
 
-**WebSocket**: `ws://localhost:8000/ws`
+**WebSocket**: `ws://localhost:8034/ws`
 
 ---
 
@@ -172,7 +172,7 @@ logging.basicConfig(level=logging.DEBUG)  # More verbose
 | `STRUDEL_DB_URL` | Yes | PostgreSQL connection string |
 | `OPENROUTER_API_KEY` | Yes | OpenRouter API key |
 | `HOST` | No | Server host (default: 0.0.0.0) |
-| `PORT` | No | Server port (default: 8000) |
+| `PORT` | No | Server port (default: 8034) |
 
 ---
 
@@ -234,7 +234,7 @@ OpenAI API error: 401 Unauthorized
 ### WebSocket Connection Failed
 
 ```
-WebSocket connection to 'ws://localhost:8000/ws' failed
+WebSocket connection to 'ws://localhost:8034/ws' failed
 ```
 
 **Fix**: 
@@ -261,7 +261,7 @@ pip install gunicorn
 gunicorn backend.server:app \
   --workers 4 \
   --worker-class uvicorn.workers.UvicornWorker \
-  --bind 0.0.0.0:8000
+  --bind 0.0.0.0:8034
 ```
 
 ### Using Docker
@@ -276,7 +276,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["uvicorn", "backend.server:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "backend.server:app", "--host", "0.0.0.0", "--port", "8034"]
 ```
 
 ### Environment

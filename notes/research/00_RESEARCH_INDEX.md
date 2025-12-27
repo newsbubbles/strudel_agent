@@ -279,6 +279,22 @@ This folder contains comprehensive research on Strudel live coding for music, ga
 - **Troubleshooting**: Browser compatibility, MIDI device detection, debugging tips
 - **Further exploration**: Ideas for custom functions (velocity sensitivity, CC control, gesture recording)
 
+### 19_drum_and_bass_production_guide.md
+**Purpose**: Comprehensive Drum and Bass production guide  
+**Status**: ✅ Complete (Added 2025-12-25)  
+**Content**:
+- **DnB fundamentals**: Fast tempo (160-180 BPM), breakbeat drums, sub bass, Reese bass, atmospheric elements
+- **Subgenre coverage**: Liquid DnB, neurofunk, jump-up, jungle, minimal/deep with specific characteristics
+- **Drum programming**: Amen break (chopping, rearranging), building breaks from scratch, breakbeat chopping techniques, layering drums (kick, snare), drum processing (compression, EQ, sidechain)
+- **Bass design**: Sub bass (sine wave foundation, rolling patterns, envelope modulation), Reese bass (classic, aggressive FM, neurofunk), wobble bass (LFO, stepped), bass layering (sub + mid + high)
+- **Song structure**: Classic DnB arrangement (intro, buildup, drop, breakdown), breakdown techniques, drop variations, complete track examples
+- **Atmospheric elements**: Pads and strings (liquid, neurofunk), vocal samples (chopped, atmospheric), sound effects and textures
+- **Complete examples**: 5 full DnB tracks (liquid, neurofunk, jump-up, minimal/deep, jungle)
+- **Production tips**: Sound design (8 tips), mixing (8 tips), arrangement (8 tips)
+- **Technical reference**: Tempo guide by subgenre, frequency ranges for all elements
+- **Advanced techniques**: Resampling and layering, drum fills and transitions, automation and movement, parallel processing
+- **Mixing checklist**: 8-point checklist for professional DnB mixing
+
 ---
 
 ## Key Findings for Agent Development
@@ -392,6 +408,7 @@ Different genres require specialized techniques:
 - **Trance**: Supersaw layering, filter sweeps, long buildups, heavy sidechain
 - **Dubstep**: LFO wobbles, bass layering, half-time drums, aggressive distortion
 - **Ambient**: Phase looping, Perlin modulation, heavy reverb, slow evolution
+- **DnB**: Fast breakbeats, Reese bass, sub bass layering, break chopping
 - Each genre has specific tempo, sound design, and arrangement patterns
 
 ### 15. Professional Transitions
@@ -422,23 +439,33 @@ Strudel can be extended with custom functions:
 - **State management**: Persistent state across cycles
 - **Event handling**: Browser APIs for hardware integration
 
+### 18. DnB Production Essentials
+Drum and Bass has unique production requirements:
+- **Fast tempo**: 160-180 BPM with half-time bass feel (80-90 BPM)
+- **Break chopping**: Amen, Think, Apache breaks with complex rearrangement
+- **Bass layering**: Sub (sine <150Hz) + Reese (detuned saws 150-800Hz) + high harmonics
+- **Heavy compression**: Aggressive drum compression for punch
+- **Sidechain ducking**: Bass ducks to kick for clarity
+- **Subgenre variation**: Liquid (melodic), neurofunk (dark), jump-up (wobbles), jungle (ragga)
+
 ---
 
 ## Agent Design Implications
 
 ### For Understanding User Intent
 The agent needs to:
-1. **Recognize musical terminology** ("groovy", "bright", "punchy", "glitchy", "loud", "polished", "atmospheric", "droning", "interactive", etc.)
+1. **Recognize musical terminology** ("groovy", "bright", "punchy", "glitchy", "loud", "polished", "atmospheric", "droning", "interactive", "rolling bass", "breakbeat", etc.)
 2. **Map to Strudel code** using vocabulary glossary
 3. **Understand context** (genre, mood, energy level, performance vs composition)
 4. **Ask clarifying questions** when intent is ambiguous
 5. **Recognize glitch/experimental requests** and apply appropriate effects
 6. **Understand mixing requests** ("make it louder", "add space", "tighten the kick")
 7. **Understand synthesis requests** ("warmer", "brighter", "more harmonics")
-8. **Recognize genre-specific requests** ("trance lead", "dubstep wobble", "supersaw", "ambient drone")
+8. **Recognize genre-specific requests** ("trance lead", "dubstep wobble", "supersaw", "ambient drone", "Reese bass", "Amen break")
 9. **Recognize transition requests** ("add a buildup", "smooth transition", "drop")
 10. **Recognize ambient requests** ("evolving", "meditative", "spacious", "generative")
 11. **Recognize interactive requests** ("keyboard control", "MIDI input", "live performance")
+12. **Recognize DnB requests** ("liquid", "neurofunk", "jump-up", "rolling sub", "chop the break")
 
 ### For Code Generation
 The agent should:
@@ -456,12 +483,15 @@ The agent should:
 12. **Add master bus processing** with `all()` when appropriate
 13. **Choose appropriate synthesis method** (basic waveforms, FM, additive, wavetable)
 14. **Combine oscillators with filters** for subtractive synthesis
-15. **Apply genre-specific techniques** (supersaw for trance, wobble for dubstep, phase loops for ambient)
+15. **Apply genre-specific techniques** (supersaw for trance, wobble for dubstep, phase loops for ambient, Reese bass for DnB)
 16. **Add professional transitions** between sections (fills, risers, sweeps, impacts)
 17. **Use generative techniques** for ambient (Perlin modulation, incommensurable loops, probabilistic patterns)
 18. **Implement interactive control** when requested (keyboard triggers, MIDI, tempo control)
 19. **Use register() for custom functions** when built-in functions aren't sufficient
 20. **Add algorithmic composition** (Markov chains, mathematical patterns) for generative music
+21. **Chop and rearrange breaks** for DnB (Amen, Think, Apache)
+22. **Layer bass properly** for DnB (sub + Reese + high harmonics)
+23. **Use half-time bass patterns** for DnB feel
 
 ### For Teaching
 The agent can:
@@ -478,12 +508,13 @@ The agent can:
 11. **Demonstrate mastering workflow** step-by-step
 12. **Explain synthesis architecture** (oscillators → filters → effects)
 13. **Cross-reference documentation** (e.g., "filters are in effects reference")
-14. **Teach genre-specific production** (trance buildups, dubstep bass design, ambient drones)
+14. **Teach genre-specific production** (trance buildups, dubstep bass design, ambient drones, DnB break chopping)
 15. **Demonstrate transition techniques** (buildups, breakdowns, fills, risers)
 16. **Teach generative techniques** (Brian Eno's phase looping, system-based composition)
 17. **Explain register() API** for creating custom functions
 18. **Guide interactive setup** (keyboard/MIDI configuration, event listeners)
 19. **Demonstrate algorithmic composition** (Markov chains, mathematical patterns)
+20. **Teach DnB fundamentals** (break chopping, Reese bass design, sub bass layering)
 
 ---
 
@@ -524,8 +555,9 @@ The agent can:
 1. **Trance** → `14_trance_production_guide.md`
 2. **Dubstep** → `15_dubstep_production_guide.md`
 3. **Ambient** → `17_ambient_music_production_guide.md`
-4. **Techno/Jazz/Dub** → `07_musical_patterns_library.md`
-5. **Glitch/IDM/Breakcore** → `12_glitch_effects_genre_guide.md`
+4. **Drum and Bass** → `19_drum_and_bass_production_guide.md`
+5. **Techno/Jazz/Dub** → `07_musical_patterns_library.md`
+6. **Glitch/IDM/Breakcore** → `12_glitch_effects_genre_guide.md`
 
 ### Advanced/Interactive
 1. **Custom Functions** → `18_interactive_and_algorithmic_functions.md`
@@ -548,10 +580,11 @@ The agent can:
 10. ✅ Transitions and arrangement guide created
 11. ✅ Ambient music production guide created
 12. ✅ Interactive and algorithmic functions documented
-13. ⏳ Create `agents/StrudelCoder.md` agent blueprint
-14. ⏳ Design snippet storage system
-15. ⏳ Build MCP server for tool access
-16. ⏳ Test agent with various musical requests
+13. ✅ Drum and Bass production guide created
+14. ⏳ Create `agents/StrudelCoder.md` agent blueprint
+15. ⏳ Design snippet storage system
+16. ⏳ Build MCP server for tool access
+17. ⏳ Test agent with various musical requests
 
 ---
 
@@ -593,13 +626,20 @@ The agent can:
 - https://blog.landr.com/soundscapes/ (soundscape creation)
 - https://www.pointblankmusicschool.com/blog/how-to-create-rich-layered-textures-in-ambient-music/ (layering)
 
+### Drum and Bass Research
+- DnB production fundamentals (breakbeat chopping, Reese bass design)
+- Classic breaks (Amen, Think, Apache) and their use in DnB
+- Subgenre characteristics (liquid, neurofunk, jump-up, jungle, minimal/deep)
+- DnB mixing techniques (heavy compression, sidechain ducking, EQ strategies)
+
 ### Genre Production Knowledge
 - EDM production principles (trance, dubstep, buildups, drops)
-- Synthesis techniques (supersaw, wobble bass, FM)
+- Synthesis techniques (supersaw, wobble bass, FM, Reese bass)
 - Mixing strategies (sidechain, filter automation)
 - Transition techniques (risers, fills, sweeps, impacts)
 - Ambient techniques (phase looping, generative systems, Perlin modulation)
 - Brian Eno's generative music philosophy
+- DnB production techniques (break chopping, bass layering, half-time feel)
 
 ---
 
@@ -609,7 +649,7 @@ The agent can:
 - **Functions Documented**: 180+ core functions and effects (including 9 custom community functions)
 - **Patterns Catalogued**: 60+ musical patterns across genres
 - **Vocabulary Terms**: 200+ musical intent → code mappings
-- **Code Examples**: 600+ working examples
+- **Code Examples**: 650+ working examples
 - **Drum Machines**: 9 classic drum machine banks
 - **Synthesis Types**: 6 synthesis methods (waveforms, FM, additive, wavetable, ZZFX, noise)
 - **Visualizers**: 7 visualization functions documented
@@ -619,13 +659,15 @@ The agent can:
 - **Song Structure Functions**: stack(), cat(), arrange() fully documented
 - **Community Examples**: 10+ verified songs from GitHub
 - **Synthesis Techniques**: 20+ sound design examples (bass, pads, leads, percussion, experimental)
-- **Genre Guides**: 3 comprehensive production guides (trance, dubstep, ambient)
-- **Genre Examples**: 13+ complete track examples across genres
+- **Genre Guides**: 4 comprehensive production guides (trance, dubstep, ambient, DnB)
+- **Genre Examples**: 18+ complete track examples across genres
 - **Transition Techniques**: 9 core transition types with 50+ examples
 - **Ambient Techniques**: Phase looping, Perlin modulation, generative systems, modal harmony
 - **Ambient Examples**: 5 complete ambient compositions + 8 subgenre examples
 - **Interactive Functions**: 9 community-created custom functions (keyboard, MIDI, tempo, Markov, EQ, etc.)
 - **Custom Function Types**: Interactive control (3), algorithmic composition (2), musical utilities (3), audio processing (1)
+- **DnB Techniques**: Break chopping, Reese bass design, sub bass layering, sidechain ducking
+- **DnB Examples**: 5 complete DnB tracks (liquid, neurofunk, jump-up, minimal/deep, jungle)
 
 ---
 
@@ -651,5 +693,6 @@ The agent can:
 | 16_transitions_and_arrangement_guide.md | ✅ Complete | 2025-12-23 | Comprehensive transition techniques |
 | 17_ambient_music_production_guide.md | ✅ Complete | 2025-12-25 | Brian Eno techniques, generative systems, complete examples |
 | 18_interactive_and_algorithmic_functions.md | ✅ Complete | 2025-12-25 | Community custom functions, register() API, interactive control |
+| 19_drum_and_bass_production_guide.md | ✅ Complete | 2025-12-25 | DnB fundamentals, break chopping, Reese bass, subgenres |
 
 **All research files are complete and verified against official documentation or established production techniques.**

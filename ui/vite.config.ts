@@ -8,12 +8,12 @@ export default defineConfig({
 		proxy: {
 			// Proxy API requests to backend
 			'/api': {
-				target: 'http://localhost:8000',
+				target: 'http://localhost:8034',
 				changeOrigin: true
 			},
 			// Proxy WebSocket connections
 			'/ws': {
-				target: 'ws://localhost:8000',
+				target: 'ws://localhost:8034',
 				ws: true
 			}
 		}

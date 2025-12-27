@@ -9,9 +9,10 @@ from datetime import datetime
 from pydantic_ai import Agent
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
-from pydantic_ai_mcp import MCPServerStdio
+# TODO: MCP integration not yet available in pydantic-ai
+# from pydantic_ai_mcp import MCPServerStdio
 
-from backend.src.db.models import SessionCreate
+from src.db.models import SessionCreate
 
 logger = logging.getLogger(__name__)
 
@@ -31,13 +32,13 @@ def create_agent(session_id: UUID, config: SessionCreate) -> Agent:
     # Create model (OpenRouter only)
     model = create_model(config)
     
-    # Create MCP servers
-    mcp_servers = create_mcp_servers(session_id, config)
+    # Create MCP servers (temporarily disabled)
+    # mcp_servers = create_mcp_servers(session_id, config)
     
     # Create agent
     agent = Agent(
         model=model,
-        mcp_servers=mcp_servers,
+        # mcp_servers=mcp_servers,  # Temporarily disabled
         system_prompt=prompt,
     )
     
@@ -77,32 +78,33 @@ def create_mcp_servers(session_id: UUID, config: SessionCreate) -> list:
     Returns:
         List of MCPServerStdio instances
     """
-    mcp_servers = [
-        # Hypergraph memory
-        MCPServerStdio(
-            'python',
-            ['hypergraph_memory/src/server.py'],
-            env={
-                'HYPERGRAPH_MEMORY_FILE': f"memory/sessions/{session_id}/memory.json",
-                'SESSION_ID': str(session_id),
-            }
-        ),
-        
-        # Strudel-specific tools
-        MCPServerStdio(
-            'python',
-            ['backend/src/mcp/strudel_server.py'],
-            env={
-                'STRUDEL_SESSION_ID': str(session_id),
-                'STRUDEL_PROJECT_ID': config.project_id,
-                'STRUDEL_ITEM_TYPE': config.session_type,
-                'STRUDEL_ITEM_ID': config.item_id,
-            }
-        ),
-    ]
+    # TODO: Implement MCP server integration
+    # mcp_servers = [
+    #     # Hypergraph memory
+    #     MCPServerStdio(
+    #         'python',
+    #         ['hypergraph_memory/src/server.py'],
+    #         env={
+    #             'HYPERGRAPH_MEMORY_FILE': f"memory/sessions/{session_id}/memory.json",
+    #             'SESSION_ID': str(session_id),
+    #         }
+    #     ),
+    #     
+    #     # Strudel-specific tools
+    #     MCPServerStdio(
+    #         'python',
+    #         ['backend/src/mcp/strudel_server.py'],
+    #         env={
+    #             'STRUDEL_SESSION_ID': str(session_id),
+    #             'STRUDEL_PROJECT_ID': config.project_id,
+    #             'STRUDEL_ITEM_TYPE': config.session_type,
+    #             'STRUDEL_ITEM_ID': config.item_id,
+    #         }
+    #     ),
+    # ]
     
-    logger.info(f"Created {len(mcp_servers)} MCP servers")
-    return mcp_servers
+    logger.warning("MCP server integration temporarily disabled")
+    return []
 
 def load_agent_prompt(agent_name: str) -> str:
     """Load agent system prompt from file.

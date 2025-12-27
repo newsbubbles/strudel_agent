@@ -11,7 +11,7 @@ from pathlib import Path
 from pydantic_ai import Agent
 from pydantic_ai.messages import ModelMessage, ModelRequest, ModelResponse, UserPromptPart, TextPart
 
-from backend.src.db import (
+from src.db import (
     async_session,
     SessionCreate,
     create_session as db_create_session,
@@ -21,8 +21,8 @@ from backend.src.db import (
     save_display_messages,
     create_memory_file,
 )
-from backend.src.db.models import MemoryFileCreate
-from backend.src.core.agent_factory import create_agent
+from src.db.models import MemoryFileCreate
+from src.core.agent_factory import create_agent
 
 logger = logging.getLogger(__name__)
 

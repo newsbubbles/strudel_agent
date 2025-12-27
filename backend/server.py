@@ -1,6 +1,15 @@
 """FastAPI server for Strudel Agent."""
 
+# Load environment variables FIRST before any other imports
 import os
+from pathlib import Path
+from dotenv import load_dotenv
+
+# Load .env from backend directory
+backend_dir = Path(__file__).parent
+env_path = backend_dir / '.env'
+load_dotenv(dotenv_path=env_path)
+
 import logging
 import asyncio
 from contextlib import asynccontextmanager
@@ -10,9 +19,10 @@ from uuid import UUID
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from pydantic import BaseModel
 from pydantic_ai.messages import ModelMessage
 
-from backend.src.db import (
+from src.db import (
     init_db, close_db, get_session as get_db_session, async_session,
     SessionCreate, SessionRead, SessionNameUpdate,
     ClipCreate, ClipUpdate, ClipRead,
@@ -25,27 +35,13 @@ from backend.src.db import (
     update_session_name as db_update_session_name,
     load_messages_paginated,
     get_message_count,
-    create_clip as db_create_clip,
-    get_clip as db_get_clip,
-    list_clips as db_list_clips,
-    update_clip as db_update_clip,
-    delete_clip as db_delete_clip,
-    create_song as db_create_song,
-    get_song as db_get_song,
-    list_songs as db_list_songs,
-    update_song as db_update_song,
-    delete_song as db_delete_song,
-    create_playlist as db_create_playlist,
-    get_playlist as db_get_playlist,
-    list_playlists as db_list_playlists,
-    update_playlist as db_update_playlist,
-    delete_playlist as db_delete_playlist,
 )
-from backend.src.models import (
+from src.services.filesystem import FilesystemService
+from src.models import (
     Handshake, UserMessage,
     ToolResponse,
 )
-from backend.src.core import (
+from src.core import (
     manager, session_manager,
     SessionState,
 )
@@ -138,16 +134,10 @@ async def websocket_endpoint(websocket: WebSocket):
         
         logger.info(f"Connection {connection_id} established for session {session_id}")
         
-        # Start MCP servers for PWA connections
-        if connection_type == 'pwa':
-            async with session_state.agent.run_mcp_servers():
-                await handle_websocket_messages(
-                    websocket, session_id, connection_type, session_state
-                )
-        else:
-            await handle_websocket_messages(
-                websocket, session_id, connection_type, session_state
-            )
+        # MCP temporarily disabled - handle all connections the same way
+        await handle_websocket_messages(
+            websocket, session_id, connection_type, session_state
+        )
     
     except WebSocketDisconnect:
         logger.info(f"WebSocket disconnected: {session_id}/{connection_id}")
@@ -372,273 +362,235 @@ async def get_messages(
     return {"messages": messages}
 
 # ============================================================================
-# Clip Endpoints
+# Project Endpoints (NEW - Filesystem-based)
 # ============================================================================
 
-@app.post("/api/clips", response_model=ClipRead)
+class ProjectCreate(BaseModel):
+    """Project creation input."""
+    project_id: str
+    name: str
+    description: Optional[str] = ""
+
+class ProjectUpdate(BaseModel):
+    """Project update input."""
+    name: Optional[str] = None
+    description: Optional[str] = None
+
+@app.get("/api/projects")
+async def list_projects(query: Optional[str] = None):
+    """List all projects."""
+    return FilesystemService.list_projects(query)
+
+@app.get("/api/projects/{project_id}")
+async def get_project(project_id: str):
+    """Get a project."""
+    project = FilesystemService.get_project(project_id)
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    return project
+
+@app.post("/api/projects")
+async def create_project(project_data: ProjectCreate):
+    """Create a new project."""
+    result = FilesystemService.create_project(
+        project_data.project_id,
+        project_data.name,
+        project_data.description or ""
+    )
+    if not result.get("success"):
+        raise HTTPException(status_code=400, detail=result.get("error"))
+    return result
+
+@app.put("/api/projects/{project_id}")
+async def update_project(project_id: str, project_update: ProjectUpdate):
+    """Update a project."""
+    result = FilesystemService.update_project(
+        project_id,
+        project_update.name,
+        project_update.description
+    )
+    if not result.get("success"):
+        raise HTTPException(status_code=404, detail=result.get("error"))
+    return result
+
+# ============================================================================
+# Clip Endpoints (Filesystem-based)
+# ============================================================================
+
+@app.post("/api/clips")
 async def create_clip(clip_data: ClipCreate):
     """Create a new clip."""
-    async with async_session() as db:
-        clip = await db_create_clip(db, clip_data)
-        return ClipRead(
-            id=clip.id,
-            clip_id=clip.clip_id,
-            project_id=clip.project_id,
-            name=clip.name,
-            code=clip.code,
-            created_at=clip.created_at,
-            updated_at=clip.updated_at,
-            metadata=clip.metadata_ or {}
-        )
+    result = FilesystemService.create_clip(
+        clip_data.project_id,
+        clip_data.clip_id,
+        clip_data.name,
+        clip_data.code,
+        clip_data.metadata
+    )
+    if not result.get("success"):
+        raise HTTPException(status_code=400, detail=result.get("error"))
+    
+    # Return the created clip
+    clip = FilesystemService.get_clip(clip_data.project_id, clip_data.clip_id)
+    return clip
 
-@app.get("/api/clips/{project_id}/{clip_id}", response_model=ClipRead)
+@app.get("/api/clips/{project_id}/{clip_id}")
 async def get_clip(project_id: str, clip_id: str):
     """Get a clip."""
-    async with async_session() as db:
-        clip = await db_get_clip(db, clip_id, project_id)
-        
-        if not clip:
-            raise HTTPException(status_code=404, detail="Clip not found")
-        
-        return ClipRead(
-            id=clip.id,
-            clip_id=clip.clip_id,
-            project_id=clip.project_id,
-            name=clip.name,
-            code=clip.code,
-            created_at=clip.created_at,
-            updated_at=clip.updated_at,
-            metadata=clip.metadata_ or {}
-        )
+    clip = FilesystemService.get_clip(project_id, clip_id)
+    if not clip:
+        raise HTTPException(status_code=404, detail="Clip not found")
+    return clip
 
-@app.get("/api/clips/{project_id}", response_model=list[ClipRead])
-async def list_clips(project_id: str):
+@app.get("/api/clips/{project_id}")
+async def list_clips(project_id: str, query: Optional[str] = None):
     """List all clips for a project."""
-    async with async_session() as db:
-        clips = await db_list_clips(db, project_id)
-        return [
-            ClipRead(
-                id=clip.id,
-                clip_id=clip.clip_id,
-                project_id=clip.project_id,
-                name=clip.name,
-                code=clip.code,
-                created_at=clip.created_at,
-                updated_at=clip.updated_at,
-                metadata=clip.metadata_ or {}
-            )
-            for clip in clips
-        ]
+    clips = FilesystemService.list_clips(project_id, query)
+    return {"clips": clips, "total": len(clips), "project_id": project_id}
 
-@app.put("/api/clips/{project_id}/{clip_id}", response_model=ClipRead)
+@app.put("/api/clips/{project_id}/{clip_id}")
 async def update_clip(project_id: str, clip_id: str, clip_update: ClipUpdate):
     """Update a clip."""
-    async with async_session() as db:
-        clip = await db_update_clip(db, clip_id, project_id, clip_update)
-        
-        if not clip:
-            raise HTTPException(status_code=404, detail="Clip not found")
-        
-        return ClipRead(
-            id=clip.id,
-            clip_id=clip.clip_id,
-            project_id=clip.project_id,
-            name=clip.name,
-            code=clip.code,
-            created_at=clip.created_at,
-            updated_at=clip.updated_at,
-            metadata=clip.metadata_ or {}
-        )
+    result = FilesystemService.update_clip(
+        project_id,
+        clip_id,
+        clip_update.name,
+        clip_update.code,
+        clip_update.metadata
+    )
+    if not result.get("success"):
+        raise HTTPException(status_code=404, detail=result.get("error"))
+    
+    # Return the updated clip
+    clip = FilesystemService.get_clip(project_id, clip_id)
+    return clip
 
 @app.delete("/api/clips/{project_id}/{clip_id}")
 async def delete_clip(project_id: str, clip_id: str):
     """Delete a clip."""
-    async with async_session() as db:
-        success = await db_delete_clip(db, clip_id, project_id)
-    
-    if not success:
-        raise HTTPException(status_code=404, detail="Clip not found")
-    
+    result = FilesystemService.delete_clip(project_id, clip_id)
+    if not result.get("success"):
+        raise HTTPException(status_code=404, detail=result.get("error"))
     return {"success": True}
 
 # ============================================================================
-# Song Endpoints
+# Song Endpoints (Filesystem-based)
 # ============================================================================
 
-@app.post("/api/songs", response_model=SongRead)
+@app.post("/api/songs")
 async def create_song(song_data: SongCreate):
     """Create a new song."""
-    async with async_session() as db:
-        song = await db_create_song(db, song_data)
-        return SongRead(
-            id=song.id,
-            song_id=song.song_id,
-            project_id=song.project_id,
-            name=song.name,
-            created_at=song.created_at,
-            updated_at=song.updated_at,
-            clip_ids=song.clip_ids or [],
-            metadata=song.metadata_ or {}
-        )
+    result = FilesystemService.create_song(
+        song_data.project_id,
+        song_data.song_id,
+        song_data.name,
+        song_data.clip_ids,
+        song_data.metadata
+    )
+    if not result.get("success"):
+        raise HTTPException(status_code=400, detail=result.get("error"))
+    
+    # Return the created song
+    song = FilesystemService.get_song(song_data.project_id, song_data.song_id)
+    return song
 
-@app.get("/api/songs/{project_id}/{song_id}", response_model=SongRead)
+@app.get("/api/songs/{project_id}/{song_id}")
 async def get_song(project_id: str, song_id: str):
     """Get a song."""
-    async with async_session() as db:
-        song = await db_get_song(db, song_id, project_id)
-        
-        if not song:
-            raise HTTPException(status_code=404, detail="Song not found")
-        
-        return SongRead(
-            id=song.id,
-            song_id=song.song_id,
-            project_id=song.project_id,
-            name=song.name,
-            created_at=song.created_at,
-            updated_at=song.updated_at,
-            clip_ids=song.clip_ids or [],
-            metadata=song.metadata_ or {}
-        )
+    song = FilesystemService.get_song(project_id, song_id)
+    if not song:
+        raise HTTPException(status_code=404, detail="Song not found")
+    return song
 
-@app.get("/api/songs/{project_id}", response_model=list[SongRead])
-async def list_songs(project_id: str):
+@app.get("/api/songs/{project_id}")
+async def list_songs(project_id: str, query: Optional[str] = None):
     """List all songs for a project."""
-    async with async_session() as db:
-        songs = await db_list_songs(db, project_id)
-        return [
-            SongRead(
-                id=song.id,
-                song_id=song.song_id,
-                project_id=song.project_id,
-                name=song.name,
-                created_at=song.created_at,
-                updated_at=song.updated_at,
-                clip_ids=song.clip_ids or [],
-                metadata=song.metadata_ or {}
-            )
-            for song in songs
-        ]
+    songs = FilesystemService.list_songs(project_id, query)
+    return {"songs": songs, "total": len(songs), "project_id": project_id}
 
-@app.put("/api/songs/{project_id}/{song_id}", response_model=SongRead)
+@app.put("/api/songs/{project_id}/{song_id}")
 async def update_song(project_id: str, song_id: str, song_update: SongUpdate):
     """Update a song."""
-    async with async_session() as db:
-        song = await db_update_song(db, song_id, project_id, song_update)
-        
-        if not song:
-            raise HTTPException(status_code=404, detail="Song not found")
-        
-        return SongRead(
-            id=song.id,
-            song_id=song.song_id,
-            project_id=song.project_id,
-            name=song.name,
-            created_at=song.created_at,
-            updated_at=song.updated_at,
-            clip_ids=song.clip_ids or [],
-            metadata=song.metadata_ or {}
-        )
+    result = FilesystemService.update_song(
+        project_id,
+        song_id,
+        song_update.name,
+        song_update.clip_ids,
+        song_update.metadata
+    )
+    if not result.get("success"):
+        raise HTTPException(status_code=404, detail=result.get("error"))
+    
+    # Return the updated song
+    song = FilesystemService.get_song(project_id, song_id)
+    return song
 
 @app.delete("/api/songs/{project_id}/{song_id}")
 async def delete_song(project_id: str, song_id: str):
     """Delete a song."""
-    async with async_session() as db:
-        success = await db_delete_song(db, song_id, project_id)
-    
-    if not success:
-        raise HTTPException(status_code=404, detail="Song not found")
-    
+    result = FilesystemService.delete_song(project_id, song_id)
+    if not result.get("success"):
+        raise HTTPException(status_code=404, detail=result.get("error"))
     return {"success": True}
 
 # ============================================================================
-# Playlist Endpoints
+# Playlist Endpoints (Filesystem-based)
 # ============================================================================
 
-@app.post("/api/playlists", response_model=PlaylistRead)
+@app.post("/api/playlists")
 async def create_playlist(playlist_data: PlaylistCreate):
     """Create a new playlist."""
-    async with async_session() as db:
-        playlist = await db_create_playlist(db, playlist_data)
-        return PlaylistRead(
-            id=playlist.id,
-            playlist_id=playlist.playlist_id,
-            project_id=playlist.project_id,
-            name=playlist.name,
-            created_at=playlist.created_at,
-            updated_at=playlist.updated_at,
-            song_ids=playlist.song_ids or [],
-            metadata=playlist.metadata_ or {}
-        )
+    result = FilesystemService.create_playlist(
+        playlist_data.project_id,
+        playlist_data.playlist_id,
+        playlist_data.name,
+        playlist_data.song_ids,
+        playlist_data.metadata
+    )
+    if not result.get("success"):
+        raise HTTPException(status_code=400, detail=result.get("error"))
+    
+    # Return the created playlist
+    playlist = FilesystemService.get_playlist(playlist_data.project_id, playlist_data.playlist_id)
+    return playlist
 
-@app.get("/api/playlists/{project_id}/{playlist_id}", response_model=PlaylistRead)
+@app.get("/api/playlists/{project_id}/{playlist_id}")
 async def get_playlist(project_id: str, playlist_id: str):
     """Get a playlist."""
-    async with async_session() as db:
-        playlist = await db_get_playlist(db, playlist_id, project_id)
-        
-        if not playlist:
-            raise HTTPException(status_code=404, detail="Playlist not found")
-        
-        return PlaylistRead(
-            id=playlist.id,
-            playlist_id=playlist.playlist_id,
-            project_id=playlist.project_id,
-            name=playlist.name,
-            created_at=playlist.created_at,
-            updated_at=playlist.updated_at,
-            song_ids=playlist.song_ids or [],
-            metadata=playlist.metadata_ or {}
-        )
+    playlist = FilesystemService.get_playlist(project_id, playlist_id)
+    if not playlist:
+        raise HTTPException(status_code=404, detail="Playlist not found")
+    return playlist
 
-@app.get("/api/playlists/{project_id}", response_model=list[PlaylistRead])
-async def list_playlists(project_id: str):
+@app.get("/api/playlists/{project_id}")
+async def list_playlists(project_id: str, query: Optional[str] = None):
     """List all playlists for a project."""
-    async with async_session() as db:
-        playlists = await db_list_playlists(db, project_id)
-        return [
-            PlaylistRead(
-                id=playlist.id,
-                playlist_id=playlist.playlist_id,
-                project_id=playlist.project_id,
-                name=playlist.name,
-                created_at=playlist.created_at,
-                updated_at=playlist.updated_at,
-                song_ids=playlist.song_ids or [],
-                metadata=playlist.metadata_ or {}
-            )
-            for playlist in playlists
-        ]
+    playlists = FilesystemService.list_playlists(project_id, query)
+    return {"playlists": playlists, "total": len(playlists), "project_id": project_id}
 
-@app.put("/api/playlists/{project_id}/{playlist_id}", response_model=PlaylistRead)
+@app.put("/api/playlists/{project_id}/{playlist_id}")
 async def update_playlist(project_id: str, playlist_id: str, playlist_update: PlaylistUpdate):
     """Update a playlist."""
-    async with async_session() as db:
-        playlist = await db_update_playlist(db, playlist_id, project_id, playlist_update)
-        
-        if not playlist:
-            raise HTTPException(status_code=404, detail="Playlist not found")
-        
-        return PlaylistRead(
-            id=playlist.id,
-            playlist_id=playlist.playlist_id,
-            project_id=playlist.project_id,
-            name=playlist.name,
-            created_at=playlist.created_at,
-            updated_at=playlist.updated_at,
-            song_ids=playlist.song_ids or [],
-            metadata=playlist.metadata_ or {}
-        )
+    result = FilesystemService.update_playlist(
+        project_id,
+        playlist_id,
+        playlist_update.name,
+        playlist_update.song_ids,
+        playlist_update.metadata
+    )
+    if not result.get("success"):
+        raise HTTPException(status_code=404, detail=result.get("error"))
+    
+    # Return the updated playlist
+    playlist = FilesystemService.get_playlist(project_id, playlist_id)
+    return playlist
 
 @app.delete("/api/playlists/{project_id}/{playlist_id}")
 async def delete_playlist(project_id: str, playlist_id: str):
     """Delete a playlist."""
-    async with async_session() as db:
-        success = await db_delete_playlist(db, playlist_id, project_id)
-    
-    if not success:
-        raise HTTPException(status_code=404, detail="Playlist not found")
-    
+    result = FilesystemService.delete_playlist(project_id, playlist_id)
+    if not result.get("success"):
+        raise HTTPException(status_code=404, detail=result.get("error"))
     return {"success": True}
 
 # ============================================================================
@@ -652,4 +604,10 @@ async def health_check():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(
+        "server:app",
+        host="0.0.0.0",
+        port=8034,
+        reload=True,
+        reload_dirs=[str(backend_dir)]
+    )
