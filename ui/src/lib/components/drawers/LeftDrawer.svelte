@@ -15,6 +15,7 @@
 	import { carousel } from '$lib/stores/carousel';
 	import { recent } from '$lib/stores/recent';
 	import { apiService, type ProjectData } from '$lib/services/api';
+	import { wsService } from '$lib/services/websocket';
 	import { onMount } from 'svelte';
 
 	// Project state
@@ -137,13 +138,20 @@
 					return;
 			}
 
+			// Get the WebSocket session ID - all panels share the same chat session
+			const sessionId = wsService.getSessionId();
+			if (!sessionId) {
+				console.error('[LeftDrawer] No WebSocket session ID available');
+				return;
+			}
+
 			// Create panel with proper properties from API data
 			const panel: any = {
 				id: panelId,
 				type: selectedType,
 				itemId: itemId,
 				projectId: selectedProjectId,
-				sessionId: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+				sessionId: sessionId,
 				isDirty: false,
 				createdAt: new Date(data.created_at || Date.now()),
 				updatedAt: new Date(data.updated_at || Date.now())

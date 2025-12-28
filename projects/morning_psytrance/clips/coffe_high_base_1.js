@@ -1,4 +1,4 @@
-//Morning Trance: Coffee High Bases 1
+// {"date": "2025-12-28", "author": null, "version": "1.0.0"}
 setcps(145/240)
 
 // Drums
@@ -15,9 +15,9 @@ $: note("[bb1 c2 c3 eb2]*4")
 
 // High lead
 $: note("eb5 ~ [eb3,g3]")
-  .s("square")
+  .s("sine")
   .fm(4).orbit(2)
   .attack(0.1).decay(0.06)
   .distort(2)
   .lpf(400).hpf(150).gain(0.2)
-  .room(0.7).delay(.5)
+  //.room(0.7).delay(.5)

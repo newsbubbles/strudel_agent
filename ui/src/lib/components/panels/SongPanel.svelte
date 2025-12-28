@@ -14,6 +14,7 @@
 	import MessageInput from './MessageInput.svelte';
 	import { carousel } from '$lib/stores/carousel';
 	import { apiService } from '$lib/services/api';
+	import { wsService } from '$lib/services/websocket';
 
 	export let panel: SongPanelType;
 
@@ -31,6 +32,13 @@
 				return;
 			}
 
+			// Get the WebSocket session ID - all panels share the same chat session
+			const sessionId = wsService.getSessionId();
+			if (!sessionId) {
+				console.error('[SongPanel] No WebSocket session ID available');
+				return;
+			}
+
 			// Fetch clip data
 			const clipData = await apiService.getClip(panel.projectId, clipId);
 
@@ -40,7 +48,7 @@
 				type: 'clip' as const,
 				itemId: clipId,
 				projectId: panel.projectId,
-				sessionId: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+				sessionId: sessionId,
 				title: clipData.name,
 				code: clipData.code,
 				isDirty: false,

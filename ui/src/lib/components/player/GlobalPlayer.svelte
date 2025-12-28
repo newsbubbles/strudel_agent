@@ -4,13 +4,17 @@
 	 *
 	 * Features:
 	 * - Play/Stop button
-	 * - Update button (re-fetch current clip after agent edits)
+	 * - Update button (sync editor code to Strudel player)
 	 * - Playing state indicator
 	 * - Strudel playback controls
 	 * - Only plays the currently focused clip in carousel
 	 *
 	 * NOTE: Strudel initialization happens in AppShell.svelte
 	 * This component only controls playback.
+	 *
+	 * Update Flow:
+	 * - User edits code in editor -> clicks Update -> reads from panel.code -> updates Strudel
+	 * - Agent edits code (saves to backend) -> sends WS signal -> frontend fetches & updates panel
 	 *
 	 * NO CLIP COMBINING - Agent handles that automatically
 	 */
@@ -19,9 +23,6 @@
 	import { currentPanel } from '$lib/stores/carousel';
 	import { player, isStrudelInitialized } from '$lib/stores/player';
 	import { strudelService } from '$lib/services/strudel';
-	import { apiService } from '$lib/services/api';
-
-	let isUpdating = false;
 
 	/** Get current clip panel (only clip panels can be played) */
 	$: currentClip = $currentPanel?.type === 'clip' ? $currentPanel : null;
@@ -67,41 +68,32 @@
 		}
 	}
 
-	/** Handle Update - Re-fetch current clip data and update player */
-	async function handleUpdate() {
+	/**
+	 * Handle Update - Read code from editor (panel.code) and update Strudel player
+	 * 
+	 * This does NOT fetch from backend - it reads the current editor state.
+	 * The panel.code is kept in sync with the editor via carousel.updatePanel().
+	 */
+	function handleUpdate() {
 		if (!currentClip) return;
 
-		isUpdating = true;
+		// Read code directly from the panel (reflects editor state)
+		const code = currentClip.code || '';
+		
+		if (!code.trim()) {
+			console.warn('[GlobalPlayer] No code to update');
+			return;
+		}
 
-		try {
-			console.log('[GlobalPlayer] Updating clip:', currentClip.itemId);
-
-			// Re-fetch clip data from backend
-			const updatedData = await apiService.getClip(currentClip.projectId, currentClip.itemId);
-
-			// Update panel data in carousel
-			const { carousel } = await import('$lib/stores/carousel');
-			carousel.updatePanel(currentClip.id, {
-				code: updatedData.code,
-				updatedAt: new Date(updatedData.updated_at || Date.now())
-			});
-
-			console.log('[GlobalPlayer] Clip updated successfully');
-
-			// Update the Strudel player with new code
-			const code = updatedData.code || '';
-			if (code.trim()) {
-				strudelService.updatePlayer(code);
-				
-				// If currently playing, restart with new code
-				if (isPlaying) {
-					strudelService.play();
-				}
-			}
-		} catch (error) {
-			console.error('[GlobalPlayer] Failed to update clip:', error);
-		} finally {
-			isUpdating = false;
+		console.log('[GlobalPlayer] Updating Strudel with editor code:', code.substring(0, 50) + '...');
+		
+		// Update the Strudel player with current editor code
+		strudelService.updatePlayer(code);
+		
+		// If currently playing, the update will take effect on next cycle
+		// Strudel handles hot-reloading automatically
+		if (isPlaying) {
+			console.log('[GlobalPlayer] Code updated while playing - changes will apply');
 		}
 	}
 
@@ -161,16 +153,11 @@
 			<!-- Update Button -->
 			<button
 				onclick={handleUpdate}
-				disabled={!currentClip || isUpdating}
+				disabled={!currentClip}
 				class="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
 			>
-				{#if isUpdating}
-					<span class="animate-spin text-base">⏳</span>
-					<span>Updating...</span>
-				{:else}
-					<span class="text-base">🔄</span>
-					<span>Update</span>
-				{/if}
+				<span class="text-base">🔄</span>
+				<span>Update</span>
 			</button>
 		{/if}
 	</div>
