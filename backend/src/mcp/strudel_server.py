@@ -1,7 +1,7 @@
 """MCP server for Strudel-specific tools using FastMCP.
 
-This server provides tools for managing Strudel clips, songs, and playlists,
-as well as PWA interaction tools for user input and notifications.
+This server provides tools for managing Strudel clips, songs, and playlists
+(via filesystem), as well as PWA interaction tools for user input and notifications.
 """
 
 import os
@@ -13,15 +13,7 @@ from collections.abc import AsyncIterator
 from pydantic import BaseModel, Field
 from mcp.server.fastmcp import FastMCP, Context
 
-from src.db import (
-    async_session,
-    get_clip, create_clip, update_clip, delete_clip, list_clips,
-    get_song, create_song, update_song, delete_song, list_songs,
-    get_playlist, create_playlist, update_playlist, delete_playlist, list_playlists,
-    ClipCreate, ClipUpdate,
-    SongCreate, SongUpdate,
-    PlaylistCreate, PlaylistUpdate,
-)
+from src.services.filesystem import FilesystemService
 from src.core.manager import manager
 
 
@@ -280,7 +272,7 @@ mcp = FastMCP("strudel-tools", lifespan=lifespan)
 
 
 # ============================================================================
-# Clip Tools
+# Clip Tools (Filesystem-based)
 # ============================================================================
 
 @mcp.tool()
@@ -292,23 +284,22 @@ async def strudel_get_clip(request: StrudelGetClipRequest, ctx: Context) -> Stru
     try:
         mcp_ctx: StrudelMCPContext = ctx.request_context.lifespan_context
         
-        async with async_session() as db:
-            clip = await get_clip(db, request.clip_id, mcp_ctx.project_id)
-            
-            if not clip:
-                return StrudelGetClipResponse(
-                    clip_id=request.clip_id,
-                    name="",
-                    code="",
-                    error=f"Clip '{request.clip_id}' not found"
-                )
-            
+        clip = FilesystemService.get_clip(mcp_ctx.project_id, request.clip_id)
+        
+        if not clip:
             return StrudelGetClipResponse(
-                clip_id=clip.clip_id,
-                name=clip.name,
-                code=clip.code,
-                metadata=clip.metadata_ or {}
+                clip_id=request.clip_id,
+                name="",
+                code="",
+                error=f"Clip '{request.clip_id}' not found"
             )
+        
+        return StrudelGetClipResponse(
+            clip_id=clip["clip_id"],
+            name=clip["name"],
+            code=clip["code"],
+            metadata=clip.get("metadata", {})
+        )
     except Exception as e:
         logger.error(f"Error getting clip {request.clip_id}: {e}")
         return StrudelGetClipResponse(
@@ -329,35 +320,38 @@ async def strudel_update_clip(request: StrudelUpdateClipRequest, ctx: Context) -
     try:
         mcp_ctx: StrudelMCPContext = ctx.request_context.lifespan_context
         
-        async with async_session() as db:
-            clip_update = ClipUpdate(code=request.new_code, metadata=request.metadata)
-            updated_clip = await update_clip(db, request.clip_id, mcp_ctx.project_id, clip_update)
-            
-            if not updated_clip:
-                return StrudelUpdateClipResponse(
-                    success=False,
-                    clip_id=request.clip_id,
-                    error=f"Clip '{request.clip_id}' not found"
-                )
-            
-            # Send update event to frontend
-            await manager.send_message(
-                mcp_ctx.session_id,
-                {
-                    'type': 'clip_updated',
-                    'clip_id': request.clip_id,
-                    'new_code': request.new_code,
-                    'metadata': request.metadata or {}
-                },
-                target='pwa'
-            )
-            
-            await ctx.info(f"Updated clip {request.clip_id}")
-            
+        result = FilesystemService.update_clip(
+            mcp_ctx.project_id,
+            request.clip_id,
+            code=request.new_code,
+            metadata=request.metadata
+        )
+        
+        if not result.get("success"):
             return StrudelUpdateClipResponse(
-                success=True,
-                clip_id=request.clip_id
+                success=False,
+                clip_id=request.clip_id,
+                error=result.get("error", "Unknown error")
             )
+        
+        # Send update event to frontend
+        await manager.send_message(
+            mcp_ctx.session_id,
+            {
+                'type': 'clip_updated',
+                'clip_id': request.clip_id,
+                'new_code': request.new_code,
+                'metadata': request.metadata or {}
+            },
+            target='pwa'
+        )
+        
+        await ctx.info(f"Updated clip {request.clip_id}")
+        
+        return StrudelUpdateClipResponse(
+            success=True,
+            clip_id=request.clip_id
+        )
     except Exception as e:
         logger.error(f"Error updating clip {request.clip_id}: {e}")
         return StrudelUpdateClipResponse(
@@ -376,22 +370,27 @@ async def strudel_create_clip(request: StrudelCreateClipRequest, ctx: Context) -
     try:
         mcp_ctx: StrudelMCPContext = ctx.request_context.lifespan_context
         
-        async with async_session() as db:
-            clip_data = ClipCreate(
-                clip_id=request.clip_id,
-                project_id=mcp_ctx.project_id,
-                name=request.name,
-                code=request.code,
-                metadata=request.metadata
-            )
-            clip = await create_clip(db, clip_data)
-            
-            await ctx.info(f"Created clip {clip.clip_id}")
-            
+        result = FilesystemService.create_clip(
+            mcp_ctx.project_id,
+            request.clip_id,
+            request.name,
+            request.code,
+            request.metadata
+        )
+        
+        if not result.get("success"):
             return StrudelCreateClipResponse(
-                success=True,
-                clip_id=clip.clip_id
+                success=False,
+                clip_id=request.clip_id,
+                error=result.get("error", "Unknown error")
             )
+        
+        await ctx.info(f"Created clip {request.clip_id}")
+        
+        return StrudelCreateClipResponse(
+            success=True,
+            clip_id=request.clip_id
+        )
     except Exception as e:
         logger.error(f"Error creating clip {request.clip_id}: {e}")
         return StrudelCreateClipResponse(
@@ -410,20 +409,19 @@ async def strudel_list_clips(ctx: Context) -> StrudelListClipsResponse:
     try:
         mcp_ctx: StrudelMCPContext = ctx.request_context.lifespan_context
         
-        async with async_session() as db:
-            clips = await list_clips(db, mcp_ctx.project_id)
-            
-            return StrudelListClipsResponse(
-                clips=[
-                    StrudelGetClipResponse(
-                        clip_id=clip.clip_id,
-                        name=clip.name,
-                        code=clip.code,
-                        metadata=clip.metadata_ or {}
-                    )
-                    for clip in clips
-                ]
-            )
+        clips = FilesystemService.list_clips(mcp_ctx.project_id)
+        
+        return StrudelListClipsResponse(
+            clips=[
+                StrudelGetClipResponse(
+                    clip_id=clip["clip_id"],
+                    name=clip["name"],
+                    code=clip.get("code", ""),
+                    metadata=clip.get("metadata", {})
+                )
+                for clip in clips
+            ]
+        )
     except Exception as e:
         logger.error(f"Error listing clips: {e}")
         return StrudelListClipsResponse(clips=[])
@@ -438,22 +436,21 @@ async def strudel_delete_clip(request: StrudelDeleteClipRequest, ctx: Context) -
     try:
         mcp_ctx: StrudelMCPContext = ctx.request_context.lifespan_context
         
-        async with async_session() as db:
-            success = await delete_clip(db, request.clip_id, mcp_ctx.project_id)
-            
-            if not success:
-                return StrudelDeleteClipResponse(
-                    success=False,
-                    clip_id=request.clip_id,
-                    error=f"Clip '{request.clip_id}' not found"
-                )
-            
-            await ctx.info(f"Deleted clip {request.clip_id}")
-            
+        result = FilesystemService.delete_clip(mcp_ctx.project_id, request.clip_id)
+        
+        if not result.get("success"):
             return StrudelDeleteClipResponse(
-                success=True,
-                clip_id=request.clip_id
+                success=False,
+                clip_id=request.clip_id,
+                error=result.get("error", "Unknown error")
             )
+        
+        await ctx.info(f"Deleted clip {request.clip_id}")
+        
+        return StrudelDeleteClipResponse(
+            success=True,
+            clip_id=request.clip_id
+        )
     except Exception as e:
         logger.error(f"Error deleting clip {request.clip_id}: {e}")
         return StrudelDeleteClipResponse(
@@ -464,7 +461,7 @@ async def strudel_delete_clip(request: StrudelDeleteClipRequest, ctx: Context) -
 
 
 # ============================================================================
-# Song Tools
+# Song Tools (Filesystem-based)
 # ============================================================================
 
 @mcp.tool()
@@ -476,22 +473,21 @@ async def strudel_get_song(request: StrudelGetSongRequest, ctx: Context) -> Stru
     try:
         mcp_ctx: StrudelMCPContext = ctx.request_context.lifespan_context
         
-        async with async_session() as db:
-            song = await get_song(db, request.song_id, mcp_ctx.project_id)
-            
-            if not song:
-                return StrudelGetSongResponse(
-                    song_id=request.song_id,
-                    name="",
-                    error=f"Song '{request.song_id}' not found"
-                )
-            
+        song = FilesystemService.get_song(mcp_ctx.project_id, request.song_id)
+        
+        if not song:
             return StrudelGetSongResponse(
-                song_id=song.song_id,
-                name=song.name,
-                clip_ids=song.clip_ids or [],
-                metadata=song.metadata_ or {}
+                song_id=request.song_id,
+                name="",
+                error=f"Song '{request.song_id}' not found"
             )
+        
+        return StrudelGetSongResponse(
+            song_id=song["song_id"],
+            name=song["name"],
+            clip_ids=song.get("clip_ids", []),
+            metadata=song.get("metadata", {})
+        )
     except Exception as e:
         logger.error(f"Error getting song {request.song_id}: {e}")
         return StrudelGetSongResponse(
@@ -511,35 +507,38 @@ async def strudel_update_song(request: StrudelUpdateSongRequest, ctx: Context) -
     try:
         mcp_ctx: StrudelMCPContext = ctx.request_context.lifespan_context
         
-        async with async_session() as db:
-            song_update = SongUpdate(clip_ids=request.clip_ids, metadata=request.metadata)
-            updated_song = await update_song(db, request.song_id, mcp_ctx.project_id, song_update)
-            
-            if not updated_song:
-                return StrudelUpdateSongResponse(
-                    success=False,
-                    song_id=request.song_id,
-                    error=f"Song '{request.song_id}' not found"
-                )
-            
-            # Send update event to frontend
-            await manager.send_message(
-                mcp_ctx.session_id,
-                {
-                    'type': 'song_updated',
-                    'song_id': request.song_id,
-                    'clip_ids': request.clip_ids,
-                    'metadata': request.metadata or {}
-                },
-                target='pwa'
-            )
-            
-            await ctx.info(f"Updated song {request.song_id}")
-            
+        result = FilesystemService.update_song(
+            mcp_ctx.project_id,
+            request.song_id,
+            clip_ids=request.clip_ids,
+            metadata=request.metadata
+        )
+        
+        if not result.get("success"):
             return StrudelUpdateSongResponse(
-                success=True,
-                song_id=request.song_id
+                success=False,
+                song_id=request.song_id,
+                error=result.get("error", "Unknown error")
             )
+        
+        # Send update event to frontend
+        await manager.send_message(
+            mcp_ctx.session_id,
+            {
+                'type': 'song_updated',
+                'song_id': request.song_id,
+                'clip_ids': request.clip_ids,
+                'metadata': request.metadata or {}
+            },
+            target='pwa'
+        )
+        
+        await ctx.info(f"Updated song {request.song_id}")
+        
+        return StrudelUpdateSongResponse(
+            success=True,
+            song_id=request.song_id
+        )
     except Exception as e:
         logger.error(f"Error updating song {request.song_id}: {e}")
         return StrudelUpdateSongResponse(
@@ -558,22 +557,27 @@ async def strudel_create_song(request: StrudelCreateSongRequest, ctx: Context) -
     try:
         mcp_ctx: StrudelMCPContext = ctx.request_context.lifespan_context
         
-        async with async_session() as db:
-            song_data = SongCreate(
-                song_id=request.song_id,
-                project_id=mcp_ctx.project_id,
-                name=request.name,
-                clip_ids=request.clip_ids,
-                metadata=request.metadata
-            )
-            song = await create_song(db, song_data)
-            
-            await ctx.info(f"Created song {song.song_id}")
-            
+        result = FilesystemService.create_song(
+            mcp_ctx.project_id,
+            request.song_id,
+            request.name,
+            request.clip_ids,
+            request.metadata
+        )
+        
+        if not result.get("success"):
             return StrudelCreateSongResponse(
-                success=True,
-                song_id=song.song_id
+                success=False,
+                song_id=request.song_id,
+                error=result.get("error", "Unknown error")
             )
+        
+        await ctx.info(f"Created song {request.song_id}")
+        
+        return StrudelCreateSongResponse(
+            success=True,
+            song_id=request.song_id
+        )
     except Exception as e:
         logger.error(f"Error creating song {request.song_id}: {e}")
         return StrudelCreateSongResponse(
@@ -584,7 +588,7 @@ async def strudel_create_song(request: StrudelCreateSongRequest, ctx: Context) -
 
 
 # ============================================================================
-# Playlist Tools
+# Playlist Tools (Filesystem-based)
 # ============================================================================
 
 @mcp.tool()
@@ -596,22 +600,21 @@ async def strudel_get_playlist(request: StrudelGetPlaylistRequest, ctx: Context)
     try:
         mcp_ctx: StrudelMCPContext = ctx.request_context.lifespan_context
         
-        async with async_session() as db:
-            playlist = await get_playlist(db, request.playlist_id, mcp_ctx.project_id)
-            
-            if not playlist:
-                return StrudelGetPlaylistResponse(
-                    playlist_id=request.playlist_id,
-                    name="",
-                    error=f"Playlist '{request.playlist_id}' not found"
-                )
-            
+        playlist = FilesystemService.get_playlist(mcp_ctx.project_id, request.playlist_id)
+        
+        if not playlist:
             return StrudelGetPlaylistResponse(
-                playlist_id=playlist.playlist_id,
-                name=playlist.name,
-                song_ids=playlist.song_ids or [],
-                metadata=playlist.metadata_ or {}
+                playlist_id=request.playlist_id,
+                name="",
+                error=f"Playlist '{request.playlist_id}' not found"
             )
+        
+        return StrudelGetPlaylistResponse(
+            playlist_id=playlist["playlist_id"],
+            name=playlist["name"],
+            song_ids=playlist.get("song_ids", []),
+            metadata=playlist.get("metadata", {})
+        )
     except Exception as e:
         logger.error(f"Error getting playlist {request.playlist_id}: {e}")
         return StrudelGetPlaylistResponse(
@@ -631,37 +634,38 @@ async def strudel_update_playlist(request: StrudelUpdatePlaylistRequest, ctx: Co
     try:
         mcp_ctx: StrudelMCPContext = ctx.request_context.lifespan_context
         
-        async with async_session() as db:
-            playlist_update = PlaylistUpdate(song_ids=request.song_ids, metadata=request.metadata)
-            updated_playlist = await update_playlist(
-                db, request.playlist_id, mcp_ctx.project_id, playlist_update
-            )
-            
-            if not updated_playlist:
-                return StrudelUpdatePlaylistResponse(
-                    success=False,
-                    playlist_id=request.playlist_id,
-                    error=f"Playlist '{request.playlist_id}' not found"
-                )
-            
-            # Send update event to frontend
-            await manager.send_message(
-                mcp_ctx.session_id,
-                {
-                    'type': 'playlist_updated',
-                    'playlist_id': request.playlist_id,
-                    'song_ids': request.song_ids,
-                    'metadata': request.metadata or {}
-                },
-                target='pwa'
-            )
-            
-            await ctx.info(f"Updated playlist {request.playlist_id}")
-            
+        result = FilesystemService.update_playlist(
+            mcp_ctx.project_id,
+            request.playlist_id,
+            song_ids=request.song_ids,
+            metadata=request.metadata
+        )
+        
+        if not result.get("success"):
             return StrudelUpdatePlaylistResponse(
-                success=True,
-                playlist_id=request.playlist_id
+                success=False,
+                playlist_id=request.playlist_id,
+                error=result.get("error", "Unknown error")
             )
+        
+        # Send update event to frontend
+        await manager.send_message(
+            mcp_ctx.session_id,
+            {
+                'type': 'playlist_updated',
+                'playlist_id': request.playlist_id,
+                'song_ids': request.song_ids,
+                'metadata': request.metadata or {}
+            },
+            target='pwa'
+        )
+        
+        await ctx.info(f"Updated playlist {request.playlist_id}")
+        
+        return StrudelUpdatePlaylistResponse(
+            success=True,
+            playlist_id=request.playlist_id
+        )
     except Exception as e:
         logger.error(f"Error updating playlist {request.playlist_id}: {e}")
         return StrudelUpdatePlaylistResponse(

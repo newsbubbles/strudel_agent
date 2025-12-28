@@ -48,7 +48,7 @@ async def init_db():
     Creates all tables if they don't exist. Safe to call multiple times.
     """
     # Import all models to register them
-    from .models import Session, Message, MemoryFile, Clip, Song, Playlist
+    from .models import Session, Message, MemoryFile
     
     async with engine.begin() as conn:
         # Use run_sync for non-async metadata operations

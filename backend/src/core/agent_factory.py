@@ -27,7 +27,7 @@ def create_agent(session_id: UUID, config: SessionCreate) -> Agent:
         Configured Agent instance
     """
     # Load agent prompt
-    prompt = load_agent_prompt(config.agent_name)
+    prompt = load_agent_prompt("LiveStrudler")
     
     # Create model (OpenRouter only)
     model = create_model(config)
@@ -54,7 +54,7 @@ def create_model(config: SessionCreate) -> OpenAIModel:
     Returns:
         OpenAIModel instance
     """
-    model_name = config.model_name or "x-ai/grok-beta"
+    model_name = "x-ai/grok-4-fast"
     
     # Use OpenRouter
     model = OpenAIModel(

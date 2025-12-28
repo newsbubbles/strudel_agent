@@ -13,11 +13,18 @@
 	import { AppShell, MainLayout } from '$lib/components/layout';
 	import { wsService } from '$lib/services/websocket';
 
-	/** Generate session ID */
+	/** Generate UUID v4 session ID */
 	function generateSessionId(): string {
-		const timestamp = Date.now();
-		const random = Math.random().toString(36).substring(2, 11);
-		return `session_${timestamp}_${random}`;
+		// Use crypto.randomUUID() if available (modern browsers)
+		if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+			return crypto.randomUUID();
+		}
+		// Fallback for older browsers - generate UUID v4 manually
+		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+			const r = (Math.random() * 16) | 0;
+			const v = c === 'x' ? r : (r & 0x3) | 0x8;
+			return v.toString(16);
+		});
 	}
 
 	/** Session ID for this app instance */
@@ -26,7 +33,7 @@
 	onMount(() => {
 		if (!browser) return;
 
-		// Generate session ID
+		// Generate session ID (UUID format required by backend)
 		sessionId = generateSessionId();
 		console.log('[App] Session ID:', sessionId);
 

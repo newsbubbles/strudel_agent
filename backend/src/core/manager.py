@@ -128,6 +128,7 @@ class ConnectionManager:
         for conn_id, ws in targets:
             try:
                 await ws.send_json(message)
+                logger.info(f"Sent message type={message.get('type')} to {conn_id}")
             except Exception as e:
                 logger.error(f"Error sending to {conn_id}: {e}")
                 # Don't disconnect here, let the main loop handle it

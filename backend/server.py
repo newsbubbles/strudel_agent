@@ -25,9 +25,6 @@ from pydantic_ai.messages import ModelMessage
 from src.db import (
     init_db, close_db, get_session as get_db_session, async_session,
     SessionCreate, SessionRead, SessionNameUpdate,
-    ClipCreate, ClipUpdate, ClipRead,
-    SongCreate, SongUpdate, SongRead,
-    PlaylistCreate, PlaylistUpdate, PlaylistRead,
     create_session as db_create_session,
     get_session_by_id as db_get_session,
     list_sessions as db_list_sessions,
@@ -48,6 +45,63 @@ from src.core import (
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# ============================================================================
+# Pydantic Models for Filesystem API
+# ============================================================================
+
+class ClipCreate(BaseModel):
+    """Clip creation input."""
+    project_id: str
+    clip_id: str
+    name: str
+    code: str
+    metadata: Optional[dict] = None
+
+class ClipUpdate(BaseModel):
+    """Clip update input."""
+    name: Optional[str] = None
+    code: Optional[str] = None
+    metadata: Optional[dict] = None
+
+class SongCreate(BaseModel):
+    """Song creation input."""
+    project_id: str
+    song_id: str
+    name: str
+    clip_ids: Optional[list] = None
+    metadata: Optional[dict] = None
+
+class SongUpdate(BaseModel):
+    """Song update input."""
+    name: Optional[str] = None
+    clip_ids: Optional[list] = None
+    metadata: Optional[dict] = None
+
+class PlaylistCreate(BaseModel):
+    """Playlist creation input."""
+    project_id: str
+    playlist_id: str
+    name: str
+    song_ids: Optional[list] = None
+    metadata: Optional[dict] = None
+
+class PlaylistUpdate(BaseModel):
+    """Playlist update input."""
+    name: Optional[str] = None
+    song_ids: Optional[list] = None
+    metadata: Optional[dict] = None
+
+class ProjectCreate(BaseModel):
+    """Project creation input."""
+    project_id: str
+    name: str
+    description: Optional[str] = ""
+
+class ProjectUpdate(BaseModel):
+    """Project update input."""
+    name: Optional[str] = None
+    description: Optional[str] = None
 
 # ============================================================================
 # Lifespan
@@ -115,13 +169,28 @@ async def websocket_endpoint(websocket: WebSocket):
             websocket, session_id, connection_type
         )
         
-        # Get or restore session
+        # Get or create session
         session_state = await session_manager.get_session(UUID(session_id))
         is_reconnect = session_state is not None
         
         if not session_state:
-            logger.info(f"Restoring session {session_id} from database")
-            session_state = await session_manager.restore_session(UUID(session_id))
+            # Try to restore from database first
+            try:
+                logger.info(f"Attempting to restore session {session_id} from database")
+                session_state = await session_manager.restore_session(UUID(session_id))
+                is_reconnect = True
+            except ValueError:
+                # Session doesn't exist - create a new one
+                logger.info(f"Creating new session {session_id}")
+                config = SessionCreate(
+                    agent_name="strudel",
+                    model_name="claude-sonnet-4-20250514",
+                    provider="anthropic",
+                    session_type="chat",
+                    session_id=UUID(session_id),  # Use the client-provided session ID
+                )
+                session_state = await session_manager.create_session(config)
+                is_reconnect = False
         
         # Send handshake ack
         await manager.send_handshake_ack(
@@ -362,19 +431,8 @@ async def get_messages(
     return {"messages": messages}
 
 # ============================================================================
-# Project Endpoints (NEW - Filesystem-based)
+# Project Endpoints (Filesystem-based)
 # ============================================================================
-
-class ProjectCreate(BaseModel):
-    """Project creation input."""
-    project_id: str
-    name: str
-    description: Optional[str] = ""
-
-class ProjectUpdate(BaseModel):
-    """Project update input."""
-    name: Optional[str] = None
-    description: Optional[str] = None
 
 @app.get("/api/projects")
 async def list_projects(query: Optional[str] = None):

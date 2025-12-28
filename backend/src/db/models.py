@@ -16,10 +16,10 @@ class SessionBase(SQLModel):
     model_name: str = Field(default="x-ai/grok-beta")
     provider: Optional[str] = Field(default="openrouter")
     
-    # Strudel-specific fields
-    session_type: str = Field(description="clip, song, playlist, or pack")
-    item_id: str = Field(description="ID of the clip/song/playlist/pack")
-    project_id: str = Field(description="Strudel project ID")
+    # Strudel-specific fields (optional for general chat sessions)
+    session_type: str = Field(default="chat", description="chat or other session types")
+    item_id: Optional[str] = Field(default=None, description="Optional item ID")
+    project_id: Optional[str] = Field(default=None, description="Optional project ID")
 
 class Session(SessionBase, table=True):
     """Session table model."""
@@ -29,13 +29,14 @@ class Session(SessionBase, table=True):
     created_at: datetime = Field(default_factory=datetime.now)
     last_activity: datetime = Field(default_factory=datetime.now)
     status: str = Field(default="active")  # active, idle, terminated
-    metadata_: dict = Field(
+    metadata_: Optional[dict] = Field(
         default_factory=dict,
-        sa_column=Column(JSONB, name="metadata")
+        sa_column=Column(JSONB, name="metadata", nullable=True)
     )
 
 class SessionCreate(SessionBase):
     """Session creation input (API)."""
+    session_id: Optional[UUID] = Field(None, description="Optional client-provided session ID")
     session_name: Optional[str] = Field(None, description="Custom session name")
 
 class SessionRead(SessionBase):
@@ -59,7 +60,7 @@ class MessageBase(SQLModel):
     """Base message fields."""
     session_id: UUID = Field(foreign_key="sessions.session_id")
     message_index: int
-    message_data: dict = Field(sa_column=Column(JSONB))
+    message_data: Optional[dict] = Field(default=None, sa_column=Column(JSONB, nullable=True))
 
 class Message(MessageBase, table=True):
     """Message table model."""
@@ -94,133 +95,3 @@ class MemoryFile(MemoryFileBase, table=True):
 class MemoryFileCreate(MemoryFileBase):
     """Memory file creation input."""
     pass
-
-# ============================================================================
-# Clips
-# ============================================================================
-
-class ClipBase(SQLModel):
-    """Base clip fields."""
-    clip_id: str = Field(description="Unique clip identifier")
-    project_id: str = Field(description="Project this clip belongs to")
-    name: str = Field(description="Clip name")
-    code: str = Field(description="Strudel code")
-
-class Clip(ClipBase, table=True):
-    """Clip table model."""
-    __tablename__ = "clips"
-    
-    id: Optional[int] = Field(default=None, primary_key=True)
-    created_at: datetime = Field(default_factory=datetime.now)
-    updated_at: datetime = Field(default_factory=datetime.now)
-    metadata_: dict = Field(
-        default_factory=dict,
-        sa_column=Column(JSONB, name="metadata")
-    )
-
-class ClipCreate(ClipBase):
-    """Clip creation input."""
-    metadata: Optional[dict] = None
-
-class ClipUpdate(SQLModel):
-    """Clip update input."""
-    name: Optional[str] = None
-    code: Optional[str] = None
-    metadata: Optional[dict] = None
-
-class ClipRead(ClipBase):
-    """Clip read output."""
-    id: int
-    created_at: datetime
-    updated_at: datetime
-    metadata: dict = Field(default_factory=dict)
-
-# ============================================================================
-# Songs
-# ============================================================================
-
-class SongBase(SQLModel):
-    """Base song fields."""
-    song_id: str = Field(description="Unique song identifier")
-    project_id: str = Field(description="Project this song belongs to")
-    name: str = Field(description="Song name")
-
-class Song(SongBase, table=True):
-    """Song table model."""
-    __tablename__ = "songs"
-    
-    id: Optional[int] = Field(default=None, primary_key=True)
-    created_at: datetime = Field(default_factory=datetime.now)
-    updated_at: datetime = Field(default_factory=datetime.now)
-    clip_ids: list = Field(
-        default_factory=list,
-        sa_column=Column(JSONB, name="clip_ids")
-    )
-    metadata_: dict = Field(
-        default_factory=dict,
-        sa_column=Column(JSONB, name="metadata")
-    )
-
-class SongCreate(SongBase):
-    """Song creation input."""
-    clip_ids: Optional[list] = None
-    metadata: Optional[dict] = None
-
-class SongUpdate(SQLModel):
-    """Song update input."""
-    name: Optional[str] = None
-    clip_ids: Optional[list] = None
-    metadata: Optional[dict] = None
-
-class SongRead(SongBase):
-    """Song read output."""
-    id: int
-    created_at: datetime
-    updated_at: datetime
-    clip_ids: list = Field(default_factory=list)
-    metadata: dict = Field(default_factory=dict)
-
-# ============================================================================
-# Playlists
-# ============================================================================
-
-class PlaylistBase(SQLModel):
-    """Base playlist fields."""
-    playlist_id: str = Field(description="Unique playlist identifier")
-    project_id: str = Field(description="Project this playlist belongs to")
-    name: str = Field(description="Playlist name")
-
-class Playlist(PlaylistBase, table=True):
-    """Playlist table model."""
-    __tablename__ = "playlists"
-    
-    id: Optional[int] = Field(default=None, primary_key=True)
-    created_at: datetime = Field(default_factory=datetime.now)
-    updated_at: datetime = Field(default_factory=datetime.now)
-    song_ids: list = Field(
-        default_factory=list,
-        sa_column=Column(JSONB, name="song_ids")
-    )
-    metadata_: dict = Field(
-        default_factory=dict,
-        sa_column=Column(JSONB, name="metadata")
-    )
-
-class PlaylistCreate(PlaylistBase):
-    """Playlist creation input."""
-    song_ids: Optional[list] = None
-    metadata: Optional[dict] = None
-
-class PlaylistUpdate(SQLModel):
-    """Playlist update input."""
-    name: Optional[str] = None
-    song_ids: Optional[list] = None
-    metadata: Optional[dict] = None
-
-class PlaylistRead(PlaylistBase):
-    """Playlist read output."""
-    id: int
-    created_at: datetime
-    updated_at: datetime
-    song_ids: list = Field(default_factory=list)
-    metadata: dict = Field(default_factory=dict)
