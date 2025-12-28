@@ -17,7 +17,7 @@
 
 	import { onDestroy } from 'svelte';
 	import { currentPanel } from '$lib/stores/carousel';
-	import { player } from '$lib/stores/player';
+	import { player, isStrudelInitialized } from '$lib/stores/player';
 	import { strudelService } from '$lib/services/strudel';
 	import { apiService } from '$lib/services/api';
 
@@ -26,11 +26,8 @@
 	/** Get current clip panel (only clip panels can be played) */
 	$: currentClip = $currentPanel?.type === 'clip' ? $currentPanel : null;
 
-	/** Check if Strudel is ready (initialized in AppShell) */
-	$: isInitialized = strudelService.isInitialized();
-
 	/** Check if we can play (clip panel + Strudel initialized) */
-	$: canPlay = currentClip !== null && isInitialized;
+	$: canPlay = currentClip !== null && $isStrudelInitialized;
 
 	/** Check if playing */
 	$: isPlaying = $player.state === 'playing';
@@ -137,7 +134,7 @@
 
 	<!-- Center: Player Controls -->
 	<div class="flex items-center gap-2">
-		{#if !isInitialized}
+		{#if !$isStrudelInitialized}
 			<!-- Initializing (handled by AppShell) -->
 			<div class="flex items-center gap-2 text-sm text-muted-foreground">
 				<span class="animate-spin">⏳</span>
@@ -185,7 +182,7 @@
 				<span class="h-2 w-2 animate-pulse rounded-full bg-green-500"></span>
 				<span>Live</span>
 			</div>
-		{:else if isInitialized}
+		{:else if $isStrudelInitialized}
 			<span>Ready</span>
 		{/if}
 	</div>
